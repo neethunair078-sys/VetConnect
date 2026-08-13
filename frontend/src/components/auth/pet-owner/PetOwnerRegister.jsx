@@ -177,7 +177,7 @@ const PetOwnerRegister = () => {
       formData
     );
 
-    // Django registration API will go here
+    // Django registration API
   };
 
   return (

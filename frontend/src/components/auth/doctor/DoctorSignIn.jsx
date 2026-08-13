@@ -114,7 +114,7 @@ const DoctorSignIn = () => {
       formData
     );
 
-    // Django API will go here
+    // Django API
   };
 
   return (

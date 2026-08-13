@@ -222,7 +222,7 @@ const DoctorRegister = () => {
       formData
     );
 
-    // Django API will go here
+    // Django API 
   };
 
   return (
