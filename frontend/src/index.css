@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #EBB183;
+  --color-secondary: #605e5b;
+  --color-dark: #1A1A1A;
+  --color-light: #FAF3EF;
+  --color-gray: #EAE7E7;
+
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #666666;
+  --color-text-light: #ffffff;
+  --color-text-highlight: #EBB183;
+  --color-text-mute: #9C8B84;
+  --color-text-dark: #1A1A1A;
+
+  --color-btn-primary: #81542E;
+  --color-btn-secondary: #C9C6C1; 
+  --color-btn-dark: #1A1A1A; 
+
+}
+
+
+body {
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
