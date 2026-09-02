@@ -6,6 +6,13 @@ import Theme from "./pages/Theme";
 // import Authentication from "./components/auth/AuthLayout";
 // import Login from "./pages/Login";
 import AuthPage from "./pages/AuthPage";
+import PetOwnerDashboard from "./pages/dashboards/PetOwnerDashboard";
+import PetsPage from "./pages/pet-owner/PetsPage";
+import AddPetPage from "./pages/pet-owner/AddPetPage";
+import PetProfilePage from "./pages/pet-owner/PetProfilePage";
+import EditPetPage from "./pages/pet-owner/EditPetPage";
+import AppointmentsPage from "./pages/pet-owner/AppointmentsPage";
+import BookAppointmentPage from "./pages/pet-owner/BookAppointmentPage";
 // import Register from "./pages/Register";
 
 function App() {
@@ -17,13 +24,16 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           {/* <Route path="/login" element={<Login />} /> */}
-          <Route
-          path="/auth"
-          element={<AuthPage />}
+          <Route path="/auth" element={<AuthPage />}
         />
 
-
-
+        <Route path="/pet-owner/dashboard" element={<PetOwnerDashboard />} />
+        <Route path="/pet-owner/pets" element={<PetsPage />} />
+        <Route path="/pet-owner/pets/add" element={<AddPetPage />} />
+        <Route path="/pet-owner/pets/:id" element={<PetProfilePage />} />
+        <Route path="/pet-owner/pets/:id/edit" element={<EditPetPage />} />
+        <Route path="/pet-owner/appointments" element={<AppointmentsPage />} />
+        <Route path="/pet-owner/appointments/book" element={<BookAppointmentPage />} />
 
           {/* Development reference page */}
           <Route path="/theme" element={<Theme />} />

@@ -5,8 +5,11 @@ import { Mail, Lock } from "lucide-react";
 import AuthInput from "../common/AuthInput";
 import AuthButton from "../common/AuthButton";
 import { validators } from "../../../utils/validation";
+import { useNavigate } from "react-router-dom";
 
 const PetOwnerSignIn = () => {
+
+  const naviagte = useNavigate()
 
   const [formData, setFormData] = useState({
     email: "",
@@ -114,6 +117,7 @@ const PetOwnerSignIn = () => {
     console.log("Pet Owner Sign In:", formData);
 
     // Django API
+    navigate("/pet-owner/dashboard");
   };
 
 

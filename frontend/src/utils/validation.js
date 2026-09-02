@@ -1,5 +1,4 @@
 export const validators = {
-
   required: (value, fieldName) => {
     if (!value || !value.trim()) {
       return `${fieldName} is required`;
@@ -79,7 +78,6 @@ export const validators = {
 
 
   name: (value, fieldName = "Name") => {
-
     if (!value || !value.trim()) {
       return `${fieldName} is required`;
     }
@@ -93,7 +91,6 @@ export const validators = {
 
 
   licenseNumber: (value) => {
-
     if (!value || !value.trim()) {
       return "License number is required";
     }
@@ -107,9 +104,74 @@ export const validators = {
 
 
   specialization: (value) => {
-
     if (!value || !value.trim()) {
       return "Specialization is required";
+    }
+
+    return "";
+  },
+
+
+  // ==========================================
+  // PET VALIDATION
+  // ==========================================
+
+  petName: (value) => {
+    if (!value?.trim()) {
+      return "Pet's name is required";
+    }
+
+    return "";
+  },
+
+
+  species: (value) => {
+    if (!value) {
+      return "Please select a species";
+    }
+
+    return "";
+  },
+
+
+  age: (value) => {
+    if (value === "" || value === null) {
+      return "Age is required";
+    }
+
+    if (Number(value) < 0) {
+      return "Age cannot be negative";
+    }
+
+    return "";
+  },
+
+
+  weight: (value) => {
+    if (value === "" || value === null) {
+      return "Weight is required";
+    }
+
+    if (Number(value) <= 0) {
+      return "Weight must be greater than 0";
+    }
+
+    return "";
+  },
+
+
+  gender: (value) => {
+    if (!value) {
+      return "Please select gender";
+    }
+
+    return "";
+  },
+
+
+  vaccinationStatus: (value) => {
+    if (!value) {
+      return "Please select vaccination status";
     }
 
     return "";

@@ -1,7 +1,10 @@
+import {useNavigate} from 'react-router-dom'
 import LogoIcon from '../../assets/logo-icon.png'
 import Container from '../layout/Container';
 
 const Navbar = () => {
+
+    const navigate = useNavigate()
 
     const navItems = [
         { name: "Home", href: "#home" },
@@ -55,6 +58,8 @@ const Navbar = () => {
               hover:opacity-90
               transition
             "
+
+            onClick={() => navigate('/auth')}
           >
             Sign Up
           </button>

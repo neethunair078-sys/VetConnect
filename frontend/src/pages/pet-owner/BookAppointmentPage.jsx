@@ -1,0 +1,1326 @@
+import { useMemo, useState } from "react";
+
+import {
+  ArrowLeft,
+  ArrowRight,
+} from "lucide-react";
+
+import { useNavigate } from "react-router-dom";
+
+import DashboardLayout from "../../components/dashboard/DashboardLayout";
+
+import BookingProgress
+  from "../../components/appointments/BookingProgress";
+
+import DoctorCard
+  from "../../components/appointments/DoctorCard";
+
+import AppointmentCalendar
+  from "../../components/appointments/AppointmentCalendar";
+
+import TimeSlotPicker
+  from "../../components/appointments/TimeSlotPicker";
+
+import BookingSummary
+  from "../../components/appointments/BookingSummary";
+
+import TelehealthReadiness
+  from "../../components/appointments/TelehealthReadiness";
+
+import { doctorsData }
+  from "../../data/doctorsData";
+
+import { availabilityData }
+  from "../../data/availabilityData";
+
+import { dashboardData }
+  from "../../data/dashboardData";
+
+
+const BookAppointmentPage = () => {
+
+  const navigate = useNavigate();
+
+
+  // ==========================================
+  // BOOKING STATE
+  // ==========================================
+
+  const [currentStep, setCurrentStep] =
+    useState(1);
+
+
+  const [selectedPet, setSelectedPet] =
+    useState(
+      dashboardData.pets[0] || null
+    );
+
+
+  const [selectedDoctor, setSelectedDoctor] =
+    useState(null);
+
+
+  const [selectedDate, setSelectedDate] =
+    useState(null);
+
+
+  const [selectedTime, setSelectedTime] =
+    useState(null);
+
+
+  const [notes, setNotes] =
+    useState("");
+
+
+  // ==========================================
+  // CALENDAR MONTH
+  // ==========================================
+
+  const [currentMonth, setCurrentMonth] =
+    useState(
+      new Date(
+        2026,
+        8,
+        1
+      )
+    );
+
+
+  // ==========================================
+  // AVAILABLE DATES
+  // ==========================================
+
+  const availableDates =
+    useMemo(() => {
+
+      if (!selectedDoctor) {
+        return [];
+      }
+
+
+      return Object.keys(
+        availabilityData[
+          selectedDoctor.id
+        ] || {}
+      );
+
+    }, [
+      selectedDoctor,
+    ]);
+
+
+  // ==========================================
+  // AVAILABLE TIMES
+  // ==========================================
+
+  const availableTimes =
+    selectedDoctor &&
+    selectedDate
+      ? availabilityData[
+          selectedDoctor.id
+        ]?.[selectedDate] || []
+      : [];
+
+
+  // ==========================================
+  // SELECT DOCTOR
+  // ==========================================
+
+  const handleDoctorSelect = (
+    doctor
+  ) => {
+
+    setSelectedDoctor(
+      doctor
+    );
+
+    setSelectedDate(
+      null
+    );
+
+    setSelectedTime(
+      null
+    );
+
+  };
+
+
+  // ==========================================
+  // SELECT DATE
+  // ==========================================
+
+  const handleDateSelect = (
+    date
+  ) => {
+
+    setSelectedDate(
+      date
+    );
+
+    setSelectedTime(
+      null
+    );
+
+  };
+
+
+  // ==========================================
+  // CHANGE MONTH
+  // ==========================================
+
+  const handleMonthChange = (
+    direction
+  ) => {
+
+    setCurrentMonth(
+      (previous) =>
+        new Date(
+          previous.getFullYear(),
+          previous.getMonth() +
+            direction,
+          1
+        )
+    );
+
+  };
+
+
+  // ==========================================
+  // STEP 1 → STEP 2
+  // ==========================================
+
+  const handleContinueToSchedule = () => {
+
+    if (!selectedDoctor) {
+      return;
+    }
+
+
+    setCurrentStep(
+      2
+    );
+
+  };
+
+
+  // ==========================================
+  // STEP 2 → STEP 3
+  // ==========================================
+
+  const handleContinueToConfirmation = () => {
+
+    if (
+      !selectedDoctor ||
+      !selectedDate ||
+      !selectedTime
+    ) {
+      return;
+    }
+
+
+    setCurrentStep(
+      3
+    );
+
+  };
+
+
+  // ==========================================
+  // CONFIRM BOOKING
+  // ==========================================
+
+  const handleConfirmBooking = () => {
+
+    const bookingData = {
+      petId: selectedPet?.id,
+      doctorId: selectedDoctor?.id,
+      date: selectedDate,
+      time: selectedTime,
+      notes,
+      type: "Online Consultation",
+    };
+
+
+    console.log(
+      "Booking:",
+      bookingData
+    );
+
+
+    /*
+      Later this becomes:
+
+      await appointmentService.createAppointment(
+        bookingData
+      );
+
+      Then:
+
+      navigate(
+        "/pet-owner/appointments"
+      );
+    */
+
+
+    alert(
+      "Appointment booked successfully!"
+    );
+
+
+    navigate(
+      "/pet-owner/appointments"
+    );
+
+  };
+
+
+  // ==========================================
+  // BACK
+  // ==========================================
+
+  const handleBack = () => {
+
+    if (currentStep === 1) {
+
+      navigate(
+        "/pet-owner/appointments"
+      );
+
+      return;
+    }
+
+
+    setCurrentStep(
+      currentStep - 1
+    );
+
+  };
+
+
+  return (
+    <DashboardLayout>
+
+      <div
+        className="
+          max-w-[1200px]
+
+          mx-auto
+
+          w-full
+        "
+      >
+
+        {/* =====================================
+            HEADER
+        ===================================== */}
+
+        <div className="mb-8">
+
+          <h1
+            className="
+              text-3xl
+              sm:text-4xl
+
+              font-bold
+
+              tracking-tight
+
+              text-[#8B572F]
+            "
+          >
+            Book Appointment
+          </h1>
+
+
+          <p
+            className="
+              mt-2
+
+              text-sm
+              sm:text-base
+
+              text-[#786D67]
+            "
+          >
+            Schedule an online consultation
+            for your furry family member.
+          </p>
+
+        </div>
+
+
+        {/* =====================================
+            PROGRESS
+        ===================================== */}
+
+        <div
+          className="
+            mb-10
+
+            max-w-[700px]
+          "
+        >
+
+          <BookingProgress
+            currentStep={
+              currentStep
+            }
+          />
+
+        </div>
+
+
+        {/* =====================================
+            MAIN LAYOUT
+        ===================================== */}
+
+        <div
+          className="
+            grid
+
+            grid-cols-1
+
+            lg:grid-cols-[minmax(0,1fr)_320px]
+
+            gap-6
+          "
+        >
+
+          {/* ===================================
+              LEFT
+          =================================== */}
+
+          <div>
+
+            {/* =================================
+                STEP 1
+            ================================= */}
+
+            {currentStep === 1 && (
+
+              <section>
+
+                <h2
+                  className="
+                    text-2xl
+                    sm:text-3xl
+
+                    font-semibold
+
+                    text-[#181615]
+                  "
+                >
+                  1. Choose a Veterinarian
+                </h2>
+
+
+                {/* Pet selector */}
+
+                <div className="mt-6">
+
+                  <h3
+                    className="
+                      text-sm
+                      font-medium
+
+                      text-[#5D514A]
+                    "
+                  >
+                    Select Pet
+                  </h3>
+
+
+                  <div
+                    className="
+                      mt-3
+
+                      flex
+                      gap-3
+
+                      overflow-x-auto
+
+                      pb-2
+                    "
+                  >
+
+                    {dashboardData.pets.map(
+                      (pet) => {
+
+                        const selected =
+                          selectedPet?.id ===
+                          pet.id;
+
+
+                        return (
+                          <button
+                            key={pet.id}
+                            type="button"
+                            onClick={() =>
+                              setSelectedPet(
+                                pet
+                              )
+                            }
+                            className={`
+                              shrink-0
+
+                              flex
+                              items-center
+                              gap-3
+
+                              rounded-full
+
+                              px-3
+                              py-2
+
+                              border
+
+                              cursor-pointer
+
+                              transition
+
+                              ${
+                                selected
+                                  ? "border-[#8B572F] bg-[#FBF3EE]"
+                                  : "border-[#E8E1DD] bg-white"
+                              }
+                            `}
+                          >
+
+                            <img
+                              src={pet.image}
+                              alt={pet.name}
+                              className="
+                                w-9
+                                h-9
+
+                                rounded-full
+
+                                object-cover
+                              "
+                            />
+
+                            <span
+                              className="
+                                text-sm
+                                font-medium
+
+                                text-[#4C423C]
+                              "
+                            >
+                              {pet.name}
+                            </span>
+
+                          </button>
+                        );
+
+                      }
+                    )}
+
+                  </div>
+
+                </div>
+
+
+                {/* Doctors */}
+
+                <div
+                  className="
+                    mt-7
+
+                    grid
+
+                    grid-cols-1
+                    md:grid-cols-2
+
+                    gap-4
+                  "
+                >
+
+                  {doctorsData.map(
+                    (doctor) => (
+
+                      <DoctorCard
+                        key={doctor.id}
+
+                        doctor={doctor}
+
+                        selected={
+                          selectedDoctor?.id ===
+                          doctor.id
+                        }
+
+                        onSelect={
+                          handleDoctorSelect
+                        }
+                      />
+
+                    )
+                  )}
+
+                </div>
+
+
+                {/* Continue */}
+
+                <div
+                  className="
+                    mt-6
+
+                    flex
+                    justify-end
+                  "
+                >
+
+                  <button
+                    type="button"
+                    disabled={!selectedDoctor}
+                    onClick={
+                      handleContinueToSchedule
+                    }
+                    className={`
+                      inline-flex
+                      items-center
+                      gap-2
+
+                      rounded-full
+
+                      px-6
+                      py-3
+
+                      text-sm
+                      font-semibold
+
+                      transition
+
+                      ${
+                        selectedDoctor
+                          ? `
+                            bg-[#8B572F]
+                            text-white
+                            cursor-pointer
+                            hover:bg-[#744622]
+                          `
+                          : `
+                            bg-[#E7E3E0]
+                            text-[#A49B95]
+                            cursor-not-allowed
+                          `
+                      }
+                    `}
+                  >
+
+                    Continue to Schedule
+
+                    <ArrowRight
+                      size={16}
+                    />
+
+                  </button>
+
+                </div>
+
+              </section>
+            )}
+
+
+            {/* =================================
+                STEP 2
+            ================================= */}
+
+            {currentStep === 2 && (
+
+              <section>
+
+                <h2
+                  className="
+                    text-2xl
+                    sm:text-3xl
+
+                    font-semibold
+
+                    text-[#181615]
+                  "
+                >
+                  2. Select Date & Time
+                </h2>
+
+
+                <p
+                  className="
+                    mt-2
+
+                    text-sm
+
+                    text-[#786D67]
+                  "
+                >
+                  Choose a date and available
+                  time for your online consultation
+                  with {selectedDoctor?.name}.
+                </p>
+
+
+                <div
+                  className="
+                    mt-6
+
+                    grid
+
+                    grid-cols-1
+                    md:grid-cols-[320px_minmax(0,1fr)]
+
+                    gap-6
+                  "
+                >
+
+                  <AppointmentCalendar
+                    currentMonth={
+                      currentMonth
+                    }
+
+                    selectedDate={
+                      selectedDate
+                    }
+
+                    availableDates={
+                      availableDates
+                    }
+
+                    onMonthChange={
+                      handleMonthChange
+                    }
+
+                    onDateSelect={
+                      handleDateSelect
+                    }
+                  />
+
+
+                  <div>
+
+                    <TimeSlotPicker
+                      selectedDate={
+                        selectedDate
+                      }
+
+                      slots={
+                        availableTimes
+                      }
+
+                      selectedTime={
+                        selectedTime
+                      }
+
+                      onSelectTime={
+                        setSelectedTime
+                      }
+                    />
+
+                  </div>
+
+                </div>
+
+
+                {/* Actions */}
+
+                <div
+                  className="
+                    mt-8
+
+                    flex
+                    flex-col-reverse
+                    sm:flex-row
+
+                    gap-3
+                  "
+                >
+
+                  <button
+                    type="button"
+                    onClick={
+                      handleBack
+                    }
+                    className="
+                      flex-1
+
+                      inline-flex
+                      items-center
+                      justify-center
+                      gap-2
+
+                      rounded-full
+
+                      border
+                      border-[#B98A68]
+
+                      py-3
+
+                      text-sm
+                      font-medium
+
+                      text-[#5F422F]
+
+                      cursor-pointer
+
+                      hover:bg-[#FBF3EE]
+
+                      transition
+                    "
+                  >
+
+                    <ArrowLeft
+                      size={16}
+                    />
+
+                    Back to Veterinarian
+
+                  </button>
+
+
+                  <button
+                    type="button"
+                    disabled={
+                      !selectedDate ||
+                      !selectedTime
+                    }
+                    onClick={
+                      handleContinueToConfirmation
+                    }
+                    className={`
+                      flex-1
+
+                      inline-flex
+                      items-center
+                      justify-center
+                      gap-2
+
+                      rounded-full
+
+                      py-3
+
+                      text-sm
+                      font-semibold
+
+                      transition
+
+                      ${
+                        selectedDate &&
+                        selectedTime
+                          ? `
+                            bg-[#8B572F]
+                            text-white
+                            cursor-pointer
+                            hover:bg-[#744622]
+                          `
+                          : `
+                            bg-[#E7E3E0]
+                            text-[#A49B95]
+                            cursor-not-allowed
+                          `
+                      }
+                    `}
+                  >
+
+                    Review & Confirm
+
+                    <ArrowRight
+                      size={16}
+                    />
+
+                  </button>
+
+                </div>
+
+              </section>
+            )}
+
+
+            {/* =================================
+                STEP 3
+            ================================= */}
+
+            {currentStep === 3 && (
+
+              <section>
+
+                <h2
+                  className="
+                    text-2xl
+                    sm:text-3xl
+
+                    font-semibold
+
+                    text-[#181615]
+                  "
+                >
+                  3. Review & Confirm
+                </h2>
+
+
+                {/* Doctor */}
+
+                <div
+                  className="
+                    mt-6
+
+                    rounded-[24px]
+
+                    bg-white
+
+                    border
+                    border-[#EEE8E4]
+
+                    p-5
+                  "
+                >
+
+                  <div
+                    className="
+                      flex
+                      items-center
+                      gap-4
+                    "
+                  >
+
+                    <img
+                      src={
+                        selectedDoctor?.image
+                      }
+                      alt={
+                        selectedDoctor?.name
+                      }
+                      className="
+                        w-16
+                        h-16
+
+                        rounded-full
+
+                        object-cover
+                      "
+                    />
+
+
+                    <div>
+
+                      <h3
+                        className="
+                          text-lg
+                          font-semibold
+
+                          text-[#302925]
+                        "
+                      >
+                        {
+                          selectedDoctor?.name
+                        }
+                      </h3>
+
+
+                      <p
+                        className="
+                          text-sm
+
+                          text-[#786D67]
+                        "
+                      >
+                        {
+                          selectedDoctor?.specialization
+                        }
+                      </p>
+
+                    </div>
+
+                  </div>
+
+
+                  <div
+                    className="
+                      mt-5
+
+                      grid
+
+                      grid-cols-1
+                      sm:grid-cols-2
+
+                      gap-5
+
+                      border-t
+                      border-[#EEE8E4]
+
+                      pt-5
+                    "
+                  >
+
+                    {/* Pet */}
+
+                    <div>
+
+                      <p
+                        className="
+                          text-xs
+                          text-[#8B7E77]
+                        "
+                      >
+                        Pet Information
+                      </p>
+
+
+                      <div
+                        className="
+                          mt-2
+
+                          flex
+                          items-center
+                          gap-2
+                        "
+                      >
+
+                        <img
+                          src={
+                            selectedPet?.image
+                          }
+                          alt={
+                            selectedPet?.name
+                          }
+                          className="
+                            w-8
+                            h-8
+
+                            rounded-full
+
+                            object-cover
+                          "
+                        />
+
+
+                        <div>
+
+                          <p
+                            className="
+                              text-sm
+                              font-medium
+
+                              text-[#302925]
+                            "
+                          >
+                            {
+                              selectedPet?.name
+                            }
+                          </p>
+
+                          <p
+                            className="
+                              text-xs
+                              text-[#786D67]
+                            "
+                          >
+                            {
+                              selectedPet?.breed
+                            }
+                          </p>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+
+                    {/* Date */}
+
+                    <div>
+
+                      <p
+                        className="
+                          text-xs
+                          text-[#8B7E77]
+                        "
+                      >
+                        Date & Time
+                      </p>
+
+
+                      <p
+                        className="
+                          mt-2
+
+                          text-sm
+                          font-medium
+
+                          text-[#302925]
+                        "
+                      >
+                        {formatDate(
+                          selectedDate
+                        )}
+                      </p>
+
+
+                      <p
+                        className="
+                          mt-1
+
+                          text-xs
+
+                          text-[#786D67]
+                        "
+                      >
+                        {selectedTime}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                {/* Notes */}
+
+                <div className="mt-6">
+
+                  <label
+                    className="
+                      text-sm
+                      font-medium
+
+                      text-[#5D514A]
+                    "
+                  >
+                    Notes for the Vet
+                  </label>
+
+
+                  <textarea
+                    value={notes}
+                    onChange={(e) =>
+                      setNotes(
+                        e.target.value
+                      )
+                    }
+                    placeholder="Describe symptoms or anything you'd like the veterinarian to know..."
+                    rows={5}
+                    className="
+                      w-full
+
+                      mt-2
+
+                      rounded-[18px]
+
+                      border
+                      border-[#E5DCD6]
+
+                      bg-white
+
+                      px-4
+                      py-3
+
+                      text-sm
+
+                      text-[#302925]
+
+                      outline-none
+
+                      resize-none
+
+                      focus:border-[#B98A68]
+
+                      focus:ring-2
+                      focus:ring-[#EBB183]/20
+                    "
+                  />
+
+                </div>
+
+
+                {/* Telehealth */}
+
+                <div
+                  className="
+                    mt-6
+                  "
+                >
+
+                  <TelehealthReadiness />
+
+                </div>
+
+
+                {/* Buttons */}
+
+                <div
+                  className="
+                    mt-8
+
+                    flex
+                    flex-col-reverse
+                    sm:flex-row
+
+                    gap-3
+                  "
+                >
+
+                  <button
+                    type="button"
+                    onClick={
+                      handleBack
+                    }
+                    className="
+                      flex-1
+
+                      inline-flex
+                      items-center
+                      justify-center
+                      gap-2
+
+                      rounded-full
+
+                      border
+                      border-[#B98A68]
+
+                      py-3
+
+                      text-sm
+                      font-medium
+
+                      text-[#5F422F]
+
+                      cursor-pointer
+
+                      hover:bg-[#FBF3EE]
+
+                      transition
+                    "
+                  >
+
+                    <ArrowLeft
+                      size={16}
+                    />
+
+                    Back to Schedule
+
+                  </button>
+
+
+                  <button
+                    type="button"
+                    onClick={
+                      handleConfirmBooking
+                    }
+                    className="
+                      flex-1
+
+                      rounded-full
+
+                      bg-[#8B572F]
+
+                      py-3
+
+                      text-sm
+                      font-semibold
+
+                      text-white
+
+                      cursor-pointer
+
+                      hover:bg-[#744622]
+
+                      hover:-translate-y-0.5
+
+                      transition-all
+                    "
+                  >
+                    Confirm & Book Appointment
+                  </button>
+
+                </div>
+
+              </section>
+            )}
+
+          </div>
+
+
+          {/* ===================================
+              SUMMARY
+          =================================== */}
+
+          <BookingSummary
+
+            pet={
+              selectedPet
+            }
+
+            doctor={
+              selectedDoctor
+            }
+
+            selectedDate={
+              selectedDate
+            }
+
+            selectedTime={
+              selectedTime
+            }
+
+            onContinue={() => {
+
+              if (
+                currentStep === 1
+              ) {
+
+                handleContinueToSchedule();
+
+              } else if (
+                currentStep === 2
+              ) {
+
+                handleContinueToConfirmation();
+
+              } else {
+
+                handleConfirmBooking();
+
+              }
+
+            }}
+
+          />
+
+        </div>
+
+      </div>
+
+    </DashboardLayout>
+  );
+};
+
+
+// =================================================
+// FORMAT DATE
+// =================================================
+
+const formatDate = (
+  dateString
+) => {
+
+  if (!dateString) {
+    return "Not selected";
+  }
+
+
+  return new Date(
+    `${dateString}T00:00:00`
+  ).toLocaleDateString(
+    "en-US",
+    {
+      weekday: "long",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }
+  );
+};
+
+
+export default BookAppointmentPage;
