@@ -13,6 +13,7 @@ import PetProfilePage from "./pages/pet-owner/PetProfilePage";
 import EditPetPage from "./pages/pet-owner/EditPetPage";
 import AppointmentsPage from "./pages/pet-owner/AppointmentsPage";
 import BookAppointmentPage from "./pages/pet-owner/BookAppointmentPage";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 // import Register from "./pages/Register";
 
 function App() {
@@ -22,21 +23,24 @@ function App() {
 
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
-          {/* <Route path="/login" element={<Login />} /> */}
-          <Route path="/auth" element={<AuthPage />}
-        />
-
-        <Route path="/pet-owner/dashboard" element={<PetOwnerDashboard />} />
-        <Route path="/pet-owner/pets" element={<PetsPage />} />
-        <Route path="/pet-owner/pets/add" element={<AddPetPage />} />
-        <Route path="/pet-owner/pets/:id" element={<PetProfilePage />} />
-        <Route path="/pet-owner/pets/:id/edit" element={<EditPetPage />} />
-        <Route path="/pet-owner/appointments" element={<AppointmentsPage />} />
-        <Route path="/pet-owner/appointments/book" element={<BookAppointmentPage />} />
-
           {/* Development reference page */}
           <Route path="/theme" element={<Theme />} />
+
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route path="/pet-owner/dashboard" element={<PetOwnerDashboard />} />
+            <Route path="/pet-owner/pets" element={<PetsPage />} />
+            <Route path="/pet-owner/pets/add" element={<AddPetPage />} />
+            <Route path="/pet-owner/pets/:id" element={<PetProfilePage />} />
+            <Route path="/pet-owner/pets/:id/edit" element={<EditPetPage />} />
+            <Route path="/pet-owner/appointments" element={<AppointmentsPage />} />
+            <Route path="/pet-owner/appointments/book" element={<BookAppointmentPage />} />
+          </Route>
+          
+
+        
 
         </Routes>
       </BrowserRouter>

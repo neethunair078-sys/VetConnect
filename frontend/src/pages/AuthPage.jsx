@@ -25,7 +25,11 @@ const AuthPage = () => {
       if (authMode === "signin") {
         return <PetOwnerSignIn />;
       }
-      return <PetOwnerRegister />;
+      return (
+        <PetOwnerRegister
+          onRegistrationSuccess={() => setAuthMode("signin")}
+        />
+      );
     }
 
 

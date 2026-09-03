@@ -6,10 +6,13 @@ import AuthInput from "../common/AuthInput";
 import AuthButton from "../common/AuthButton";
 import { validators } from "../../../utils/validation";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
 
 const PetOwnerSignIn = () => {
 
-  const naviagte = useNavigate()
+  const navigate = useNavigate()
+
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -101,23 +104,36 @@ const PetOwnerSignIn = () => {
   };
 
 
-  const handleSubmit = (e) => {
-
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-
     const isValid = validateForm();
-
 
     if (!isValid) {
       return;
     }
 
+    try {
+      const data = await login({
+        email: formData.email,
+        password: formData.password,
+      });
 
-    console.log("Pet Owner Sign In:", formData);
+      console.log("Login successful:", data);
 
-    // Django API
-    navigate("/pet-owner/dashboard");
+      navigate("/pet-owner/dashboard");
+
+    } catch (error) {
+      console.error(
+        "Login failed:",
+        error.response?.data || error.message
+      );
+
+      setErrors((prev) => ({
+        ...prev,
+        password: "Invalid email or password.",
+      }));
+    }
   };
 
 

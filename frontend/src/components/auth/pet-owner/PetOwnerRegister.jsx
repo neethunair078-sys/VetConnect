@@ -1,11 +1,18 @@
 import { useState } from "react";
 import { User, Mail, Phone, Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import AuthInput from "../common/AuthInput";
 import AuthButton from "../common/AuthButton";
 import { validators } from "../../../utils/validation";
+import { registerPetOwner } from "../../../api/authApi";
 
-const PetOwnerRegister = () => {
+const PetOwnerRegister = ({onRegistrationSuccess}) => {
+
+  const navigate = useNavigate();
+
+
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -162,7 +169,7 @@ const PetOwnerRegister = () => {
   };
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
 
     e.preventDefault();
 
@@ -171,11 +178,22 @@ const PetOwnerRegister = () => {
       return;
     }
 
+    try {
+      const data = await registerPetOwner(formData);
 
-    console.log(
-      "Pet Owner Registration:",
-      formData
-    );
+      console.log("Registration successful:", data);
+
+      onRegistrationSuccess();
+
+    } catch (error) {
+      console.error("Registration failed:", error.response?.data || error.message);
+    }
+
+
+    // console.log(
+    //   "Pet Owner Registration:",
+    //   formData
+    // );
 
     // Django registration API
   };

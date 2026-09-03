@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 
 const menuItems = [
@@ -47,6 +48,7 @@ const Sidebar = ({
   onClose,
 }) => {
 
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -69,14 +71,14 @@ const Sidebar = ({
 
 
   // Logout handler
-  const handleLogout = () => {
+  const handleLogout = async () => {
 
     // For now, remove the logged-in user
     localStorage.removeItem("user");
 
     // Later we will replace this with Django logout/API
-    navigate("/login");
-
+    await logout();
+    navigate("/auth");
     if (mobile && onClose) {
       onClose();
     }
@@ -86,10 +88,9 @@ const Sidebar = ({
   return (
     <aside
       className={`
-        ${
-          mobile
-            ? "fixed left-0 top-0 z-50 w-[260px]"
-            : "hidden lg:flex fixed left-0 top-0 z-30 w-[230px]"
+        ${mobile
+          ? "fixed left-0 top-0 z-50 w-[260px]"
+          : "hidden lg:flex fixed left-0 top-0 z-30 w-[230px]"
         }
 
         h-screen
@@ -249,14 +250,13 @@ const Sidebar = ({
                 transition-all
                 duration-200
 
-                ${
-                  isActive
-                    ? `
+                ${isActive
+                  ? `
                       bg-[#EBB183]
                       text-[#62412D]
                       font-medium
                     `
-                    : `
+                  : `
                       text-[#665D57]
                       hover:bg-[#EBB183]/20
                       hover:text-[#62412D]
