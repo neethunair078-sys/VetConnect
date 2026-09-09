@@ -263,7 +263,7 @@ const PetProfilePage = () => {
                 <InfoBadge
                   icon={Heart}
                   label="Status"
-                  value={pet.status || "Healthy"}
+                  value={pet.stvaccinationStatusatus || "Healthy"}
                 />
 
               </div>

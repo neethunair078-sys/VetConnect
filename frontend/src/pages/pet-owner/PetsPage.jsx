@@ -1,17 +1,41 @@
-import { Plus } from "lucide-react";
+import { Plus, Truck } from "lucide-react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import PetCard from "../../components/dashboard/PetCard";
-
-import { dashboardData } from "../../data/dashboardData";
 import { useNavigate } from "react-router-dom";
+import {getPets} from "../../api/petsApi"
+
+import { setPets, setLoading, setError } from "../../store/slices/petSlice";
 
 
 const PetsPage = () => {
 
   const navigate = useNavigate();
-  const pets = dashboardData.pets;
+  const dispatch = useDispatch()
 
+  const {pets, loading, error} = useSelector((state) => state.pets)
+
+  useEffect(() => {
+    const fetchPets = async () => {
+        try {
+          dispatch(setLoading(true))
+          dispatch(setError(null))
+
+          const data = await getPets()
+          dispatch(setPets(data))
+        }  catch (error) {
+            console.error( "Failed to fetch pets:", error.response?.data || error.message)
+            dispatch(setError(
+              error.response?.data?.detail || "Failed to load pets."
+            ))
+        } finally {
+          dispatch(setLoading(false))
+        }
+    }
+    fetchPets()
+  },  [dispatch])
 
   // =================================
   // ADD NEW PET
@@ -150,153 +174,160 @@ const PetsPage = () => {
       {/* =================================
           PET GRID
       ================================= */}
+      {loading && (
+        <p className="mt-10 text-sm text-[#665D57]">
+          Loading your pets...
+        </p>
+      )}
 
-      <div
-        className="
-          mt-10
-
-          grid
-          grid-cols-1
-
-          sm:grid-cols-2
-
-          xl:grid-cols-3
-
-          gap-6
-          lg:gap-7
-
-          max-w-[1100px]
-        "
-      >
-
-        {/* Existing Pets */}
-
-        {pets.map((pet) => (
-
-          <PetCard
-            key={pet.id}
-            pet={pet}
-            variant="list"
-            onClick={() => handlePetClick(pet)}
-          />
-
-        ))}
-
-
-        {/* =================================
-            ADD NEW PET CARD
-        ================================= */}
-
-        <button
-          type="button"
-          onClick={handleAddPet}
+      {error && (
+        <p className="mt-10 text-sm text-red-500">
+          {error}
+        </p>
+      )}
+      {!loading && (
+        <div
           className="
-            group
-
-            w-full
-            min-h-[315px]
-
-            rounded-[32px]
-
-            border
-            border-dashed
-            border-[#DCCFC6]
-
-            bg-transparent
-
-            flex
-            flex-col
-            items-center
-            justify-center
-
-            px-8
-
-            text-center
-
-            cursor-pointer
-
-            transition-all
-            duration-200
-
-            hover:bg-white
-            hover:border-[#EBB183]
-
-            hover:shadow-[0_12px_30px_rgba(70,45,30,0.06)]
-
-            active:scale-[0.99]
+            mt-10
+            grid
+            grid-cols-1
+            sm:grid-cols-2
+            xl:grid-cols-3
+            gap-6
+            lg:gap-7
+            max-w-[1100px]
           "
         >
 
-          {/* Plus Circle */}
+          {/* Existing Pets */}
 
-          <span
+          {pets.map((pet) => (
+
+            <PetCard
+              key={pet.id}
+              pet={pet}
+              variant="list"
+              onClick={() => handlePetClick(pet)}
+            />
+
+          ))}
+
+
+          {/* =================================
+              ADD NEW PET CARD
+          ================================= */}
+
+          <button
+            type="button"
+            onClick={handleAddPet}
             className="
-              w-14
-              h-14
+              group
 
-              rounded-full
+              w-full
+              min-h-[315px]
 
-              bg-[#F3EFED]
+              rounded-[32px]
+
+              border
+              border-dashed
+              border-[#DCCFC6]
+
+              bg-transparent
 
               flex
+              flex-col
               items-center
               justify-center
 
-              text-[#65452E]
+              px-8
+
+              text-center
+
+              cursor-pointer
 
               transition-all
               duration-200
 
-              group-hover:bg-[#FBEDE2]
-              group-hover:scale-105
+              hover:bg-white
+              hover:border-[#EBB183]
+
+              hover:shadow-[0_12px_30px_rgba(70,45,30,0.06)]
+
+              active:scale-[0.99]
             "
           >
-            <Plus size={25} />
-          </span>
+
+            {/* Plus Circle */}
+
+            <span
+              className="
+                w-14
+                h-14
+
+                rounded-full
+
+                bg-[#F3EFED]
+
+                flex
+                items-center
+                justify-center
+
+                text-[#65452E]
+
+                transition-all
+                duration-200
+
+                group-hover:bg-[#FBEDE2]
+                group-hover:scale-105
+              "
+            >
+              <Plus size={25} />
+            </span>
 
 
-          {/* Heading */}
+            {/* Heading */}
 
-          <h2
-            className="
-              mt-6
+            <h2
+              className="
+                mt-6
 
-              text-xl
-              sm:text-[22px]
+                text-xl
+                sm:text-[22px]
 
-              font-medium
-              leading-7
+                font-medium
+                leading-7
 
-              text-[#292421]
-            "
-          >
-            Welcome a new
-            <br />
-            family member
-          </h2>
+                text-[#292421]
+              "
+            >
+              Welcome a new
+              <br />
+              family member
+            </h2>
 
 
-          {/* Description */}
+            {/* Description */}
 
-          <p
-            className="
-              mt-3
+            <p
+              className="
+                mt-3
 
-              max-w-[230px]
+                max-w-[230px]
 
-              text-sm
-              leading-5
+                text-sm
+                leading-5
 
-              text-[#665D57]
-            "
-          >
-            Add another pet to track their
-            health records and appointments.
-          </p>
+                text-[#665D57]
+              "
+            >
+              Add another pet to track their
+              health records and appointments.
+            </p>
 
-        </button>
+          </button>
 
-      </div>
+        </div>
+      )}
 
     </DashboardLayout>
   );

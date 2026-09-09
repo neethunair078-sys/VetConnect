@@ -6,27 +6,27 @@ import {
   Check,
 } from "lucide-react";
 
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 
-import PetBasicInfoForm
-  from "../../components/forms/pets/PetBasicInfoForm";
+import PetBasicInfoForm from "../../components/forms/pets/PetBasicInfoForm";
 
-import PetMedicalForm
-  from "../../components/forms/pets/PetMedicalForm";
+import PetMedicalForm from "../../components/forms/pets/PetMedicalForm";
 
-import PetPhotoForm
-  from "../../components/forms/pets/PetPhotoForm";
+import PetPhotoForm from "../../components/forms/pets/PetPhotoForm";
 
-import { validators }
-  from "../../utils/validation";
+import { validators } from "../../utils/validation";
+
+import { createPet } from "../../api/petsApi";
+import { addPet } from "../../store/slices/petSlice";
+import { useDispatch } from "react-redux";
 
 
 const AddPetPage = () => {
 
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
 
   // ==========================================
   // STEP
@@ -41,20 +41,16 @@ const AddPetPage = () => {
   // ==========================================
 
   const [formData, setFormData] = useState({
-
     name: "",
     species: "",
     breed: "",
     age: "",
     weight: "",
     gender: "",
-
     microchip: "",
     vaccinationStatus: "",
     medicalNotes: "",
-
     photo: null,
-
   });
 
 
@@ -399,42 +395,33 @@ const AddPetPage = () => {
   // SUBMIT
   // ==========================================
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
 
-    console.log(
-      "Pet data:",
-      formData
-    );
+    // console.log("Pet data:", formData);
 
-
-    /*
-      Later:
-
-      const formDataToSend =
-        new FormData();
-
-      formDataToSend.append(
-        "name",
-        formData.name
+    try {
+      const data = new FormData()
+      data.append("name", formData.name)
+      data.append("species", formData.species);
+      data.append("breed", formData.breed);
+      data.append("age", formData.age);
+      data.append("weight", formData.weight);
+      data.append("gender", formData.gender.toUpperCase());
+      data.append("vaccination_status", formData.vaccinationStatus.toUpperCase().replaceAll(" ", "_"));
+      data.append("microchip", formData.microchip);
+      data.append("medical_notes", formData.medicalNotes);
+      if (formData.photo) {
+        data.append("image", formData.photo);
+      }
+      const newPet = await createPet(data)
+      dispatch(addPet(newPet))
+      navigate("/pet-owner/pets");
+    } catch (error) {
+      console.error("Failed to create pet:", error.response?.data || error.message);
+      alert(
+        "Failed to save pet. Please try again."
       );
-
-      ...
-
-      await petService.createPet(
-        formDataToSend
-      );
-    */
-
-
-    alert(
-      "Pet information ready to be saved."
-    );
-
-
-    navigate(
-      "/pet-owner/pets"
-    );
-
+    }
   };
 
 

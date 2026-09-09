@@ -48,7 +48,7 @@ const Sidebar = ({
   onClose,
 }) => {
 
-  const { logout } = useAuth();
+  const {user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -72,11 +72,6 @@ const Sidebar = ({
 
   // Logout handler
   const handleLogout = async () => {
-
-    // For now, remove the logged-in user
-    localStorage.removeItem("user");
-
-    // Later we will replace this with Django logout/API
     await logout();
     navigate("/auth");
     if (mobile && onClose) {
@@ -187,8 +182,8 @@ const Sidebar = ({
             "
           >
             <img
-              src="/images/profile/user.jpg"
-              alt="Sarah"
+              src={user?.profileImage || "/images/profile/user.jpg"}
+              alt={user?.fullname || "User Profile"}
               className="w-full h-full object-cover"
             />
           </div>
@@ -201,7 +196,7 @@ const Sidebar = ({
             </p>
 
             <p className="text-sm text-[#443A35]">
-              Sarah
+              {user?.fullname || "User"}
             </p>
 
             {/* <p className="text-xs text-[#8B7E77]">

@@ -4,6 +4,8 @@ const PetCard = ({
   variant = "dashboard",
 }) => {
 
+  console.log("PetCard data:", pet);
+
   // ==========================================
   // DASHBOARD CARD
   // ==========================================
@@ -109,7 +111,7 @@ const PetCard = ({
               text-[#876247]
             "
           >
-            {pet.status}
+            {pet.vaccination_status}
           </span>
 
         </div>
@@ -167,14 +169,14 @@ const PetCard = ({
           font-medium
 
           ${
-            pet.status === "Vaccine Due"
+            pet.vaccination_status  === "NOT_VACCINATED"
               ? "bg-[#FFE2E0] text-[#D9544D]"
               : "bg-[#F4E4D8] text-[#7A4D2C]"
           }
         `}
       >
 
-        {pet.status}
+        {pet.vaccination_status}
 
       </div>
 
