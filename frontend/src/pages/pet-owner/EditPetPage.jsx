@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 import {
   ArrowLeft,
@@ -15,9 +16,12 @@ import PetMedicalForm from "../../components/forms/pets/PetMedicalForm";
 
 import PetPhotoForm from "../../components/forms/pets/PetPhotoForm";
 
-import { dashboardData } from "../../data/dashboardData";
 
 import { validators } from "../../utils/validation";
+
+import { getPet, updatePet as updatePetApi } from "../../api/petsApi";
+
+import { updatePets as updatePetsRedux } from "../../store/slices/petSlice";
 
 
 const EditPetPage = () => {
@@ -26,84 +30,16 @@ const EditPetPage = () => {
 
   const { id } = useParams();
 
+  const dispatch = useDispatch()
+
+  const [pet, setPet] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null); 
+
 
   // ==========================================
   // FIND PET
   // ==========================================
-
-  const pet = dashboardData.pets.find(
-    (item) => item.id === Number(id)
-  );
-
-
-  // ==========================================
-  // PET NOT FOUND
-  // ==========================================
-
-  if (!pet) {
-
-    return (
-      <DashboardLayout>
-
-        <div
-          className="
-            min-h-[400px]
-            flex
-            items-center
-            justify-center
-          "
-        >
-
-          <div className="text-center">
-
-            <h2
-              className="
-                text-xl
-                font-semibold
-                text-[#302925]
-              "
-            >
-              Pet not found
-            </h2>
-
-
-            <button
-              type="button"
-              onClick={() =>
-                navigate("/pet-owner/pets")
-              }
-              className="
-                mt-4
-
-                rounded-full
-
-                bg-[#8B572F]
-
-                px-5
-                py-2.5
-
-                text-sm
-                font-medium
-
-                text-white
-
-                cursor-pointer
-
-                hover:bg-[#744622]
-
-                transition
-              "
-            >
-              Back to Pets
-            </button>
-
-          </div>
-
-        </div>
-
-      </DashboardLayout>
-    );
-  }
 
 
   // ==========================================
@@ -119,27 +55,15 @@ const EditPetPage = () => {
   // ==========================================
 
   const [formData, setFormData] = useState({
-
-    name: pet.name || "",
-
-    species: pet.species || "",
-
-    breed: pet.breed || "",
-
-    age: extractAge(pet.age),
-
-    weight: pet.weight || "",
-
-    gender: pet.gender || "",
-
-    microchip: pet.microchip || "",
-
-    vaccinationStatus:
-      pet.vaccinationStatus || "",
-
-    medicalNotes:
-      pet.medicalNotes || "",
-
+    name: "",
+    species: "",
+    breed: "",
+    age: "",
+    weight: "",
+    gender: "",
+    microchip: "",
+    vaccinationStatus: "",
+    medicalNotes: "",
     photo: null,
 
   });
@@ -165,8 +89,71 @@ const EditPetPage = () => {
   // PHOTO PREVIEW
   // ==========================================
 
-  const [preview, setPreview] =
-    useState(pet.image || null);
+  const [preview, setPreview] = useState(null);
+
+
+
+  // ==========================================
+  // FETCH PET
+  // ==========================================
+
+
+  useEffect(() => {
+    const fetchApi = async () => {
+      try {
+        setLoading(true)
+        setLoadError(null)
+
+        const data = await getPet(id)
+
+        setPet(data)
+
+        setFormData({
+          name: data.name || "",
+          species: data.species || "",
+          breed: data.breed || "",
+          age: extractAge(data.age),
+          weight: data.weight || "",
+
+          // Backend MALE/FEMALE → form Male/Female
+          gender:
+            data.gender === "MALE"
+              ? "Male"
+              : data.gender === "FEMALE"
+              ? "Female"
+              : "",
+
+          microchip: data.microchip || "",
+
+          vaccinationStatus:
+            data.vaccination_status === "VACCINATED"
+              ? "Vaccinated"
+              : data.vaccination_status === "PARTIALLY_VACCINATED"
+              ? "Partially vaccinated"
+              : data.vaccination_status === "NOT_VACCINATED"
+              ? "Not vaccinated"
+              : "",
+
+          medicalNotes: data.medical_notes || "",
+          photo: null,
+        })
+
+        setPreview(data.image || null)
+      } catch (error) {
+        console.error(
+          "Failed to fetch pet:",
+          error.response?.data || error.message
+        );
+
+        setLoadError("Unable to load pet.");
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchApi()
+
+  }, [id])
 
 
   // ==========================================
@@ -493,124 +480,54 @@ const EditPetPage = () => {
   // SAVE CHANGES
   // ==========================================
 
-  const handleSubmit = () => {
+const handleSubmit = async () => {
+  try {
+    const data = new FormData();
 
-    const updatedPet = {
+    data.append("name", formData.name);
+    data.append("species", formData.species);
+    data.append("breed", formData.breed);
+    data.append("age", formData.age);
+    data.append("weight", formData.weight);
 
-      ...pet,
-
-      name: formData.name,
-
-      species: formData.species,
-
-      breed: formData.breed,
-
-      age: formData.age
-        ? `${formData.age} yrs`
-        : "",
-
-      weight: formData.weight,
-
-      gender: formData.gender,
-
-      microchip:
-        formData.microchip,
-
-      vaccinationStatus:
-        formData.vaccinationStatus,
-
-      medicalNotes:
-        formData.medicalNotes,
-
-      image:
-        preview || pet.image,
-
-    };
-
-
-    console.log(
-      "Updated pet:",
-      updatedPet
+    data.append(
+      "gender",
+      formData.gender.toUpperCase()
     );
 
+    data.append("microchip", formData.microchip);
 
-    /*
-      ==========================================
-      LATER WITH DJANGO
-      ==========================================
-
-      const formDataToSend =
-        new FormData();
-
-      formDataToSend.append(
-        "name",
-        formData.name
-      );
-
-      formDataToSend.append(
-        "species",
-        formData.species
-      );
-
-      formDataToSend.append(
-        "breed",
-        formData.breed
-      );
-
-      formDataToSend.append(
-        "age",
-        formData.age
-      );
-
-      formDataToSend.append(
-        "weight",
-        formData.weight
-      );
-
-      formDataToSend.append(
-        "gender",
-        formData.gender
-      );
-
-      formDataToSend.append(
-        "microchip",
-        formData.microchip
-      );
-
-      formDataToSend.append(
-        "vaccinationStatus",
-        formData.vaccinationStatus
-      );
-
-      formDataToSend.append(
-        "medicalNotes",
-        formData.medicalNotes
-      );
-
-      if (formData.photo) {
-        formDataToSend.append(
-          "photo",
-          formData.photo
-        );
-      }
-
-      await petService.updatePet(
-        pet.id,
-        formDataToSend
-      );
-    */
-
-
-    alert(
-      `${formData.name}'s profile is ready to be updated.`
+    data.append(
+      "vaccination_status",
+      formData.vaccinationStatus
+        .toUpperCase()
+        .replaceAll(" ", "_")
     );
 
-
-    navigate(
-      `/pet-owner/pets/${pet.id}`
+    data.append(
+      "medical_notes",
+      formData.medicalNotes
     );
 
-  };
+    // Only send image if user selected a NEW one
+    if (formData.photo) {
+      data.append("image", formData.photo);
+    }
+
+    const updatedPet = await updatePetApi(id, data);
+
+    dispatch(updatePetsRedux(updatedPet));
+
+    navigate(`/pet-owner/pets/${id}`);
+  } catch (error) {
+    console.error(
+      "Failed to update pet:",
+      error.response?.data || error.message
+    );
+
+    alert("Failed to update pet. Please try again.");
+  }
+};
 
 
   // ==========================================
@@ -624,6 +541,68 @@ const EditPetPage = () => {
     );
 
   };
+
+
+
+  
+
+  // ==========================================
+  // LOADER
+  // ==========================================
+
+
+  if (loading) {
+  return (
+    <DashboardLayout>
+      <div className="flex min-h-[400px] items-center justify-center">
+        <p className="text-sm text-[#665D57]">
+          Loading pet...
+        </p>
+      </div>
+    </DashboardLayout>
+  );
+}
+
+
+  // ==========================================
+  // PET NOT FOUND
+  // ==========================================
+
+
+if (loadError || !pet) {
+  return (
+    <DashboardLayout>
+      <div className="flex min-h-[400px] items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-[#302925]">
+            Pet not found
+          </h2>
+
+          <button
+            type="button"
+            onClick={() => navigate("/pet-owner/pets")}
+            className="
+              mt-4
+              rounded-full
+              bg-[#8B572F]
+              px-5
+              py-2.5
+              text-sm
+              font-medium
+              text-white
+              cursor-pointer
+              hover:bg-[#744622]
+              transition
+            "
+          >
+            Back to Pets
+          </button>
+        </div>
+      </div>
+    </DashboardLayout>
+  );
+}
+
 
 
   return (

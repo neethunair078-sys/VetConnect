@@ -5,8 +5,8 @@ import FormTextarea from "../FormTextarea";
 
 const vaccinationOptions = [
   {
-    value: "Up to date",
-    label: "Up to date",
+    value: "VACCINATED",
+    label: "Vaccinated",
   },
   {
     value: "Partially vaccinated",

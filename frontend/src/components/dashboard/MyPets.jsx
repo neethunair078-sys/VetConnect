@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 const MyPets = ({
   pets,
+  loading,
+  error,
   onViewAll,
   onPetClick,
 }) => {
@@ -28,25 +30,84 @@ const MyPets = ({
         onAction={() => navigate("/pet-owner/pets")}
       />
 
+      {/* Loading */}
 
-      <div
-        className="
-          grid
-          grid-cols-1
-          sm:grid-cols-2
-          gap-4
-        "
-      >
+      {loading && (
+        <div className="py-10 text-center">
+          <p className="text-sm text-[#81756E]">
+            Loading your pets...
+          </p>
+        </div>
+      )}
 
-        {pets.map((pet) => (
-          <PetCard
-            key={pet.id}
-            pet={pet}
-            onClick={() => onPetClick?.(pet)}
-          />
-        ))}
 
-      </div>
+      {/* Error */}
+
+      {!loading && error && (
+        <div className="py-10 text-center">
+          <p className="text-sm text-red-500">
+            Unable to load your pets.
+          </p>
+        </div>
+      )}
+
+
+      {/* Empty */}
+
+      {!loading && !error && pets.length === 0 && (
+        <div className="py-10 text-center">
+
+          <p className="text-sm text-[#81756E]">
+            You haven't added any pets yet.
+          </p>
+
+          <button
+            type="button"
+            onClick={() => navigate("/pet-owner/pets/add")}
+            className="
+              mt-4
+              rounded-full
+              bg-[#8B572F]
+              px-5
+              py-2.5
+              text-sm
+              font-medium
+              text-white
+              cursor-pointer
+              hover:bg-[#744622]
+              transition
+            "
+          >
+            Add Your First Pet
+          </button>
+
+        </div>
+      )}
+
+
+
+
+
+      {!loading && !error && pets.length > 0 && (
+        <div
+          className="
+            grid
+            grid-cols-1
+            sm:grid-cols-2
+            gap-4
+          "
+        >
+
+          {pets.map((pet) => (
+            <PetCard
+              key={pet.id}
+              pet={pet}
+              onClick={() => onPetClick?.(pet)}
+            />
+          ))}
+
+        </div>
+      )}
 
     </section>
   );

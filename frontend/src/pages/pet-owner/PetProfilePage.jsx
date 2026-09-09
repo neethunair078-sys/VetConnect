@@ -1,34 +1,105 @@
 import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   CalendarDays,
   Heart,
   Scale,
-  ShoppingBag,
 } from "lucide-react";
 
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
-import { dashboardData } from "../../data/dashboardData";
+import { getPet } from "../../api/petsApi";
+import { deletePet } from "../../api/petsApi";
+import { removePets } from "../../store/slices/petSlice";
 
 
 const PetProfilePage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const dispatch = useDispatch();
+
+  const [pet, setPet] = useState(null)
+  const [loading, setLoading] = useState(null)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchPet = async () => {
+      try {
+        setLoading(true)
+        const data = await getPet(id)
+
+        setPet(data)
+      } catch (error) {
+        console.error(
+          "Failed to fetch pet:",
+          error.response?.data || error.message
+        );
+
+        setError("Unable to load pet profile.");
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchPet()
+
+  }, [id])
+
 
   // ------------------------------------------
-  // TEMPORARY DATA
-  // Later this will come from Django API
+  // DELETE PET
   // ------------------------------------------
 
-  const pet = dashboardData.pets.find(
-    (item) => item.id === Number(id)
+  const handleDelete = async () => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete ${pet.name}'s profile?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await deletePet(id);
+
+      dispatch(removePets(Number(id)));
+
+      navigate("/pet-owner/pets");
+    } catch (error) {
+      console.error(
+        "Failed to delete pet:",
+        error.response?.data || error.message
+      );
+
+      alert("Failed to delete pet. Please try again.");
+    }
+};
+
+
+  // ------------------------------------------
+  // LOADING
+  // ------------------------------------------
+
+  if (loading) {
+  return (
+    <DashboardLayout>
+      <div className="flex min-h-[400px] items-center justify-center">
+        <p className="text-[#665D57]">
+          Loading pet profile...
+        </p>
+      </div>
+    </DashboardLayout>
   );
+}
+
+
 
   // ------------------------------------------
   // PET NOT FOUND
   // ------------------------------------------
 
-  if (!pet) {
+  if (error || !pet) {
     return (
       <DashboardLayout>
         <div className="flex min-h-[400px] items-center justify-center">
@@ -215,7 +286,7 @@ const PetProfilePage = () => {
                 {pet.gender && (
                   <>
                     {" • "}
-                    {pet.gender}
+                    {pet.gender === "MALE" ? "Male" : "Female"}
                   </>
                 )}
               </p>
@@ -263,7 +334,12 @@ const PetProfilePage = () => {
                 <InfoBadge
                   icon={Heart}
                   label="Status"
-                  value={pet.stvaccinationStatusatus || "Healthy"}
+                  value={
+                    pet.vaccination_status
+                      ?.replaceAll("_", " ")
+                      .toLowerCase()
+                      .replace(/\b\w/g, (char) => char.toUpperCase())
+                  }
                 />
 
               </div>
@@ -297,35 +373,50 @@ const PetProfilePage = () => {
                     items-center
                     justify-center
                     gap-2
-
                     rounded-full
-
                     bg-[#8B572F]
-
                     px-6
                     py-3
-
                     text-sm
                     font-semibold
-
                     text-white
-
                     cursor-pointer
-
                     hover:bg-[#744622]
-
                     hover:-translate-y-0.5
-
                     hover:shadow-md
-
                     active:translate-y-0
-
                     transition-all
                   "
                 >
                   <CalendarDays size={17} />
 
                   Book a Vet
+                </button>
+
+
+                {/* DELETE BUTTON */}
+
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  className="
+                    inline-flex
+                    items-center
+                    justify-center
+                    rounded-full
+                    border
+                    border-[#E8B7B3]
+                    px-6
+                    py-3
+                    text-sm
+                    font-semibold
+                    text-[#D9544D]
+                    cursor-pointer
+                    hover:bg-[#FFF3F2]
+                    transition-all
+                  "
+                >
+                  Delete Pet
                 </button>
 
               </div>

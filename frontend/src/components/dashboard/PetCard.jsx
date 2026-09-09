@@ -1,10 +1,8 @@
-const PetCard = ({
-  pet,
-  onClick,
-  variant = "dashboard",
-}) => {
+import {useNavigate} from 'react-router-dom'
 
-  console.log("PetCard data:", pet);
+const PetCard = ({pet, onClick, variant = "dashboard"}) => {
+
+  const navigate = useNavigate()
 
   // ==========================================
   // DASHBOARD CARD
@@ -325,30 +323,8 @@ const PetCard = ({
 
         <button
           type="button"
-          onClick={() => onClick?.(pet)}
-          className="
-            flex-1
-
-            rounded-full
-
-            bg-[#FBEDE2]
-
-            py-2.5
-
-            text-xs
-            font-semibold
-
-            text-[#8B572F]
-
-            cursor-pointer
-
-            transition-all
-            duration-200
-
-            hover:bg-[#F6DFD0]
-
-            active:scale-[0.98]
-          "
+          onClick={() => navigate(`/pet-owner/pets/${pet.id}`)}
+          className="flex-1 rounded-full bg-[#FBEDE2] py-2.5 text-xs font-semibold text-[#8B572F] cursor-pointer transition-all duration-200 hover:bg-[#F6DFD0] active:scale-[0.98]"
         >
           View Profile
         </button>

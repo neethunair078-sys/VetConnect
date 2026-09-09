@@ -1,3 +1,7 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import MyPets from "../../components/dashboard/MyPets";
 import QuickActions from "../../components/dashboard/QuickActions";
@@ -6,19 +10,82 @@ import HealthIntelligence from "../../components/dashboard/HealthIntelligence";
 
 import { dashboardData } from "../../data/dashboardData";
 
+import { setPets, setLoading, setError, } from "../../store/slices/petSlice";
+
+import { getPets } from "../../api/petsApi";
+
+
+
 
 const PetOwnerDashboard = () => {
 
+    const dispatch = useDispatch();
+    const navigate = useNavigate()
+
     const {
-        user,
-        pets,
         consultations,
         healthUpdates,
     } = dashboardData;
 
+    // ==========================================
+    // PETS FROM REDUX
+    // ==========================================
+
+      const {
+        pets,
+        loading,
+        error,
+    } = useSelector((state) => state.pets);
+
+
+    // ==========================================
+  // FETCH PETS
+  // ==========================================
+
+  useEffect(() => {
+
+    const fetchPets = async () => {
+
+      try {
+
+        dispatch(setLoading(true));
+
+        const data = await getPets();
+
+        dispatch(setPets(data));
+
+      } catch (error) {
+
+        console.error(
+          "Failed to fetch dashboard pets:",
+          error.response?.data || error.message
+        );
+
+        dispatch(
+          setError(
+            error.response?.data ||
+            "Failed to load pets."
+          )
+        );
+
+      } finally {
+
+        dispatch(setLoading(false));
+
+      }
+
+    };
+
+
+    fetchPets();
+
+  }, [dispatch]);
+
+
 
     const handlePetClick = (pet) => {
-        console.log("Selected pet:", pet);
+        // console.log("Selected pet:", pet);
+        navigate(`/pet-owner/pets/${pet.id}`)
     };
 
 
@@ -36,50 +103,50 @@ const PetOwnerDashboard = () => {
     };
 
     const upcomingAppointments = dashboardData.appointments.filter(
-  (appointment) => appointment.status === "Upcoming"
-);
+    (appointment) => appointment.status === "Upcoming"
+    );
 
-const pastAppointments = dashboardData.appointments.filter(
-  (appointment) => appointment.status === "Completed"
-);
-
-
-    return (
-        <DashboardLayout>
-
-            {/* Page heading */}
-
-            <section className="mb-8">
-
-                <h1 className="text-4xl sm:text-5xl font-bold tracking-tight leading-tight text-[#171412]" >
-                    Overview
-                </h1>
-
-                <p className="mt-2 text-sm sm:text-base text-[#81756E]">
-                    Here is what's happening with your furry family members.
-                </p>
-
-            </section>
+    const pastAppointments = dashboardData.appointments.filter(
+    (appointment) => appointment.status === "Completed"
+    );
 
 
-            {/* Top row */}
+        return (
+            <DashboardLayout>
 
-            <section className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_320px] gap-5">
+                {/* Page heading */}
 
-                <MyPets
-                    pets={pets}
-                    onPetClick={handlePetClick}
-                    onViewAll={() =>
-                        console.log("View all pets")
-                    }
-                />
+                <section className="mb-8">
 
-                <QuickActions
-                    onBookVet={handleBookVet}
-                    onViewRecords={handleViewRecords}
-                />
+                    <h1 className="text-4xl sm:text-5xl font-bold tracking-tight leading-tight text-[#171412]" >
+                        Overview
+                    </h1>
 
-            </section>
+                    <p className="mt-2 text-sm sm:text-base text-[#81756E]">
+                        Here is what's happening with your furry family members.
+                    </p>
+
+                </section>
+
+
+                {/* Top row */}
+
+                <section className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_320px] gap-5">
+
+                    <MyPets
+                        pets={pets}
+                        onPetClick={handlePetClick}
+                        // onViewAll={() =>
+                        //     console.log("View all pets")
+                        // }
+                    />
+
+                    <QuickActions
+                        onBookVet={handleBookVet}
+                        onViewRecords={handleViewRecords}
+                    />
+
+                </section>
 
 
             {/* Bottom row */}
