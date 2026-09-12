@@ -153,13 +153,20 @@ const DoctorSignIn = () => {
       error.response?.data || error.message
     );
 
-    const apiError = error.response?.data;
+    const apiErrors = error.response?.data;
+
+    const firstError =
+        apiErrors?.email?.[0] ||
+        apiErrors?.password?.[0] ||
+        apiErrors?.role?.[0] ||
+        apiErrors?.non_field_errors?.[0] ||
+        apiErrors?.detail ||
+        "Unable to sign in. Please try again.";
+
+    toast.error(firstError);
 
     setErrors({
-      submit:
-        apiError?.non_field_errors?.[0] ||
-        apiError?.detail ||
-        "Unable to sign in. Please check your credentials.",
+      submit: firstError
     });
   } finally {
       setLoading(false);
@@ -247,11 +254,11 @@ const DoctorSignIn = () => {
 
         <div className="mt-5">
 
-          {errors.submit && (
+          {/* {errors.submit && (
             <p className="mt-3 text-sm text-red-500">
               {errors.submit}
             </p>
-          )}
+          )} */}
 
           <AuthButton loading={loading}>
             Sign In

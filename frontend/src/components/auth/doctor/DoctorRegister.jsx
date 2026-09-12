@@ -255,11 +255,22 @@ const DoctorRegister = ({onRegistrationSuccess}) => {
 
       const apiErrors = error.response?.data;
 
+      const firstError =
+        apiErrors?.email?.[0] ||
+        apiErrors?.licenseNumber?.[0] ||
+        apiErrors?.phone?.[0] ||
+        apiErrors?.fullName?.[0] ||
+        apiErrors?.specialization?.[0] ||
+        apiErrors?.password?.[0] ||
+        apiErrors?.confirmPassword?.[0] ||
+        apiErrors?.non_field_errors?.[0] ||
+        apiErrors?.detail ||
+        "Registration failed. Please try again.";
+
+      toast.error(firstError);
+
       setErrors({
-        submit:
-          apiErrors?.non_field_errors?.[0] ||
-          apiErrors?.detail ||
-          "Registration failed. Please try again.",
+        submit: firstError
       });
     } finally {
       setLoading(false);
@@ -382,11 +393,11 @@ const DoctorRegister = ({onRegistrationSuccess}) => {
           error={errors.confirmPassword}
         />
 
-        {errors.submit && (
+        {/* {errors.submit && (
           <p className="mt-3 text-sm text-red-500">
             {errors.submit}
           </p>
-        )}
+        )} */}
         <AuthButton loading={loading}>
           Submit for Verification
         </AuthButton>

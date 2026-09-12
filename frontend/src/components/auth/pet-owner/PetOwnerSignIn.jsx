@@ -137,10 +137,22 @@ const PetOwnerSignIn = () => {
         error.response?.data || error.message
       );
 
-      setErrors((prev) => ({
-        ...prev,
-        password: "Invalid email or password.",
-      }));
+      const apiErrors = error.response?.data;
+
+      const firstError =
+        apiErrors?.email?.[0] ||
+        apiErrors?.password?.[0] ||
+        apiErrors?.role?.[0] ||
+        apiErrors?.non_field_errors?.[0] ||
+        apiErrors?.detail ||
+        "Unable to sign in. Please try again.";
+
+      toast.error(firstError);
+
+      // setErrors((prev) => ({
+      //   ...prev,
+      //   password: "Invalid email or password.",
+      // }));
     } finally {
       setLoading(false);
     }
@@ -213,11 +225,11 @@ const PetOwnerSignIn = () => {
 
 
         <div className="mt-5">
-          {errors.submit && (
+          {/* {errors.submit && (
             <p className="mt-3 text-sm text-red-500">
               {errors.submit}
             </p>
-          )}
+          )} */}
           <AuthButton loading={loading}>
             Sign In
           </AuthButton>
