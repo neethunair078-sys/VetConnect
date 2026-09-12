@@ -2,6 +2,8 @@ import { useState } from "react";
 
 import { Mail, Lock } from "lucide-react";
 
+import toast from "react-hot-toast";
+
 import AuthInput from "../common/AuthInput";
 import AuthButton from "../common/AuthButton";
 import { validators } from "../../../utils/validation";
@@ -18,6 +20,8 @@ const PetOwnerSignIn = () => {
     email: "",
     password: "",
   });
+  
+  const [loading, setLoading] = useState(false);
 
   const [errors, setErrors] = useState({});
 
@@ -113,13 +117,17 @@ const PetOwnerSignIn = () => {
       return;
     }
 
+    setLoading(true);
+
     try {
       const data = await login({
         email: formData.email,
         password: formData.password,
+        role: "PET_OWNER",
       });
 
-      console.log("Login successful:", data);
+      // console.log("Login successful:", data);
+      toast.success(data.message);
 
       navigate("/pet-owner/dashboard");
 
@@ -133,6 +141,8 @@ const PetOwnerSignIn = () => {
         ...prev,
         password: "Invalid email or password.",
       }));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -203,7 +213,12 @@ const PetOwnerSignIn = () => {
 
 
         <div className="mt-5">
-          <AuthButton>
+          {errors.submit && (
+            <p className="mt-3 text-sm text-red-500">
+              {errors.submit}
+            </p>
+          )}
+          <AuthButton loading={loading}>
             Sign In
           </AuthButton>
         </div>

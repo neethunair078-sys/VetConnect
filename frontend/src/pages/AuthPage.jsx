@@ -40,7 +40,7 @@ const AuthPage = () => {
       if (authMode === "signin") {
         return <DoctorSignIn />;
       }
-      return <DoctorRegister />;
+      return <DoctorRegister onRegistrationSuccess={() => setAuthMode("signin")} />;
     }
 
     return null;

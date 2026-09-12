@@ -3,14 +3,25 @@ import { Mail, Lock } from "lucide-react";
 
 import AuthInput from "../common/AuthInput";
 import AuthButton from "../common/AuthButton";
+import toast from "react-hot-toast";
 import { validators } from "../../../utils/validation";
 
+import { useAuth } from "../../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+
 const DoctorSignIn = () => {
+
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
 
   const [errors, setErrors] = useState({});
 
@@ -99,7 +110,7 @@ const DoctorSignIn = () => {
   };
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
 
     e.preventDefault();
 
@@ -108,13 +119,52 @@ const DoctorSignIn = () => {
       return;
     }
 
+    setLoading(true);
 
-    console.log(
-      "Doctor Sign In:",
-      formData
+    try {
+      const data = await login({email: formData.email, password: formData.password, role: "DOCTOR",})
+
+      // console.log("Doctor Login Success:", data)
+
+      toast.success(data.message);
+
+      const user = data.user
+
+      if (user.role !== "DOCTOR") {
+        setErrors({
+          submit: "This account is not registered as a doctor.",
+        });
+        return;
+      }
+
+
+      // Approved doctor but profile is not completed
+
+      if (user.doctorProfile && !user.doctorProfile.isProfileComplete) {
+        navigate("/doctor/complete-profile");
+        return;
+      }
+
+      navigate("/doctor/dashboard");
+    } catch (error) {
+
+    console.error(
+      "Doctor Login Failed:",
+      error.response?.data || error.message
     );
 
-    // Django API
+    const apiError = error.response?.data;
+
+    setErrors({
+      submit:
+        apiError?.non_field_errors?.[0] ||
+        apiError?.detail ||
+        "Unable to sign in. Please check your credentials.",
+    });
+  } finally {
+      setLoading(false);
+  }
+
   };
 
   return (
@@ -142,6 +192,8 @@ const DoctorSignIn = () => {
 
 
       {/* Form */}
+
+     
 
       <form
         onSubmit={handleSubmit}
@@ -195,7 +247,13 @@ const DoctorSignIn = () => {
 
         <div className="mt-5">
 
-          <AuthButton>
+          {errors.submit && (
+            <p className="mt-3 text-sm text-red-500">
+              {errors.submit}
+            </p>
+          )}
+
+          <AuthButton loading={loading}>
             Sign In
           </AuthButton>
 

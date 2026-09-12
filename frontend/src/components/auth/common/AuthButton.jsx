@@ -2,13 +2,14 @@ import { ArrowRight } from "lucide-react";
 
 const AuthButton = ({
   children,
+  loading = false,
   type = "submit",
   disabled = false,
 }) => {
   return (
     <button
       type={type}
-      disabled={disabled}
+      disabled={loading || disabled}
       className="
         w-full
         h-[40px]
@@ -25,9 +26,28 @@ const AuthButton = ({
         transition
       "
     >
-      {children}
+      {loading ? (
+        <>
+          <span
+            className="
+              h-4
+              w-4
+              rounded-full
+              border-2
+              border-current
+              border-t-transparent
+              animate-spin
+            "
+          />
 
-      <ArrowRight size={16} />
+          <span>Processing...</span>
+        </>
+      ) : (
+        <>
+          {children}
+          <ArrowRight size={16} />
+        </>
+      )}
 
     </button>
   );

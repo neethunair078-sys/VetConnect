@@ -17,7 +17,6 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 // import Register from "./pages/Register";
 
 function App() {
-
   return (
     <>
 

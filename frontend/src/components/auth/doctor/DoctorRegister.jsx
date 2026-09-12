@@ -8,13 +8,17 @@ import {
   Stethoscope,
   Award,
 } from "lucide-react";
+import toast from "react-hot-toast";
 
 import AuthInput from "../common/AuthInput";
 import AuthButton from "../common/AuthButton";
 
+
 import { validators } from "../../../utils/validation";
 
-const DoctorRegister = () => {
+import { doctorRegister } from "../../../api/authApi";
+
+const DoctorRegister = ({onRegistrationSuccess}) => {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -25,6 +29,9 @@ const DoctorRegister = () => {
     confirmPassword: "",
   });
 
+
+
+  const [loading, setLoading] = useState(false);
 
   const [errors, setErrors] = useState({});
 
@@ -207,7 +214,7 @@ const DoctorRegister = () => {
   };
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
 
     e.preventDefault();
 
@@ -217,10 +224,48 @@ const DoctorRegister = () => {
     }
 
 
-    console.log(
-      "Doctor Registration:",
-      formData
-    );
+    setLoading(true);
+
+    try {
+      setErrors({});
+
+      const data = await doctorRegister(formData);
+
+      // console.log("Doctor Registration Success:", data);
+      toast.success(data.message);
+
+      setFormData({
+        fullName: "",
+        email: "",
+        phone: "",
+        licenseNumber: "",
+        specialization: "",
+        password: "",
+        confirmPassword: "",
+      });
+
+      onRegistrationSuccess();
+
+
+    } catch (error) {
+      console.error(
+        "Doctor Registration Failed:",
+        error.response?.data || error.message
+      );
+
+      const apiErrors = error.response?.data;
+
+      setErrors({
+        submit:
+          apiErrors?.non_field_errors?.[0] ||
+          apiErrors?.detail ||
+          "Registration failed. Please try again.",
+      });
+    } finally {
+      setLoading(false);
+    }
+
+
 
     // Django API 
   };
@@ -293,7 +338,7 @@ const DoctorRegister = () => {
 
         <AuthInput
         name="licenseNumber"
-          label="License Number"
+          label="License Number"  
           placeholder="License number"
           icon={Award}
           value={formData.licenseNumber}
@@ -337,7 +382,12 @@ const DoctorRegister = () => {
           error={errors.confirmPassword}
         />
 
-        <AuthButton>
+        {errors.submit && (
+          <p className="mt-3 text-sm text-red-500">
+            {errors.submit}
+          </p>
+        )}
+        <AuthButton loading={loading}>
           Submit for Verification
         </AuthButton>
 

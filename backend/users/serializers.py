@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 # from .models import User
+from .models import DoctorProfile
 
 
 
@@ -12,7 +13,7 @@ User = get_user_model()
 class PetOwnerRegisterSerializer(serializers.ModelSerializer):
     fullName  = serializers.CharField(required=True, max_length=150)
     email = serializers.EmailField(required=True)
-    phone = serializers.CharField(required=True, max_length=15, validators=[RegexValidator(r'^\+?1?\d{9,15}$', message="Enter a valid 10-digit phone number.")])
+    phone = serializers.CharField(required=True, max_length=15, validators=[RegexValidator(r'^\+?1?\d{9,15}$', message="Enter a valid phone number.")])
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'}, validators=[validate_password])
     confirmPassword = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
 
@@ -76,26 +77,191 @@ class PetOwnerRegisterSerializer(serializers.ModelSerializer):
         return user
 
 
+
+class DoctorRegisterSerializer(serializers.ModelSerializer):
+    fullName = serializers.CharField(required=True, max_length=150)
+    email = serializers.EmailField(required=True)
+    phone = serializers.CharField(required=True, max_length=15, validators=[RegexValidator(r'^\+?1?\d{9,15}$', message="Enter a valid phone number.")])
+    licenseNumber = serializers.CharField(required=True, max_length=100)
+    specialization = serializers.CharField(required=True, max_length=150)
+    password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'}, validators=[validate_password])
+    confirmPassword = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
+
+    class Meta:
+        model = User
+
+        fields = [
+            "fullName",
+            "email",
+            "phone",
+            "licenseNumber",
+            "specialization",
+            "password",
+            "confirmPassword",
+        ]
+
+    def validate_email(self, value):
+
+        value = value.lower().strip()
+
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError(
+                "A user with that email already exists."
+            )
+
+        return value
+
+    def validate_licenseNumber(self, value):
+
+        value = value.strip()
+
+        if DoctorProfile.objects.filter(license_number=value).exists():
+            raise serializers.ValidationError(
+                "A doctor with this license number already exists."
+            )
+
+        return value
+
+    def validate(self, attrs):
+
+        if attrs["password"] != attrs["confirmPassword"]:
+            raise serializers.ValidationError({
+                "confirmPassword": "Passwords didn't match."
+            })
+
+        return attrs
+
+    def create(self, validated_data):
+        validated_data.pop("confirmPassword")
+        full_name = validated_data.pop("fullName")
+        license_number = validated_data.pop("licenseNumber")
+        specialization = validated_data.pop("specialization")
+        name_parts = full_name.strip().split(" ", 1)
+        first_name = name_parts[0]
+        last_name = (name_parts[1] if len(name_parts) > 1 else "")
+
+        user = User.objects.create_user(
+            first_name=first_name,
+            last_name=last_name,
+            role=User.Role.DOCTOR,
+            **validated_data
+        )
+
+        DoctorProfile.objects.create(
+            user=user,
+            license_number=license_number,
+            specialization=specialization,
+        )
+
+        return user
+
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
+    role = serializers.ChoiceField(choices=User.Role.choices, required=True)
+
 
     def validate(self, attrs):
         email = attrs.get('email')
         password = attrs.get('password')
+        requested_role = attrs.get('role')
 
-        if email and password:
-            user = authenticate(email=email, password=password)
+        if not email or not password:
+            raise serializers.ValidationError(
+                "Both email and password are required."
+            )
 
-            if user:
-                if not user.is_active:
-                    raise serializers.ValidationError(
-                        "Your account is inactive."
-                    )
-                attrs['user'] = user
-            else:
-                raise serializers.ValidationError("Invalid email or password.")
-        else:
-            raise serializers.ValidationError("Both email and password are required.")
+        user = authenticate(email=email, password=password)
+
+        if not user:
+            raise serializers.ValidationError(
+                "Invalid email or password."
+            )
+
+        if not user.is_active:
+            raise serializers.ValidationError(
+                "Your account is inactive."
+            )
+
+
+
+        # Check user role
+
+        if user.role != requested_role:
+
+            if user.role == User.Role.DOCTOR:
+                raise serializers.ValidationError(
+                    "This account is registered as a doctor. "
+                    "Please use Doctor Sign In."
+                )
+
+            if user.role == User.Role.PET_OWNER:
+                raise serializers.ValidationError(
+                    "This account is registered as a pet owner. "
+                    "Please use Pet Owner Sign In."
+                )
+
+            raise serializers.ValidationError(
+                "Invalid account role."
+            )
+
+
+
+        # Doctor approval check
+        if user.role == User.Role.DOCTOR:
+
+            doctor_profile = getattr(user, "doctor_profile", None)
+
+            if not doctor_profile:
+                raise serializers.ValidationError(
+                    "Doctor profile not found."
+                )
+
+            if (doctor_profile.approval_status == DoctorProfile.ApprovalStatus.PENDING):
+                raise serializers.ValidationError("Your doctor registration is awaiting admin approval.")
+
+            if (doctor_profile.approval_status == DoctorProfile.ApprovalStatus.REJECTED):
+                raise serializers.ValidationError("Your doctor registration has been rejected.")
+
+            if (doctor_profile.approval_status != DoctorProfile.ApprovalStatus.APPROVED):
+                raise serializers.ValidationError("Your doctor account is not approved.")
+
+        attrs['user'] = user
 
         return attrs
+
+
+
+
+
+class DoctorApprovalSerializer(serializers.ModelSerializer):
+
+    fullName = serializers.SerializerMethodField()
+    email = serializers.EmailField(
+        source="user.email",
+        read_only=True
+    )
+    phone = serializers.CharField(
+        source="user.phone",
+        read_only=True
+    )
+
+    class Meta:
+        model = DoctorProfile
+        fields = [
+            "id",
+            "fullName",
+            "email",
+            "phone",
+            "license_number",
+            "specialization",
+            "approval_status",
+            "is_profile_complete",
+            "created_at",
+        ]
+        read_only_fields = fields
+
+    def get_fullName(self, obj):
+        return obj.user.get_full_name()
+
+

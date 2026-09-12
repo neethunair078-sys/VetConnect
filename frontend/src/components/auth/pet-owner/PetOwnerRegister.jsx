@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { User, Mail, Phone, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 import AuthInput from "../common/AuthInput";
 import AuthButton from "../common/AuthButton";
@@ -21,6 +22,7 @@ const PetOwnerRegister = ({onRegistrationSuccess}) => {
     confirmPassword: "",
   });
 
+  const [loading, setLoading] = useState(false);
 
   const [errors, setErrors] = useState({});
 
@@ -178,24 +180,23 @@ const PetOwnerRegister = ({onRegistrationSuccess}) => {
       return;
     }
 
+    setLoading(true);
+
     try {
       const data = await registerPetOwner(formData);
 
-      console.log("Registration successful:", data);
+      // console.log("Registration successful:", data);
+      toast.success(data.message);
 
       onRegistrationSuccess();
 
     } catch (error) {
       console.error("Registration failed:", error.response?.data || error.message);
+    } finally {
+      setLoading(false);
     }
 
 
-    // console.log(
-    //   "Pet Owner Registration:",
-    //   formData
-    // );
-
-    // Django registration API
   };
 
   return (
@@ -289,7 +290,13 @@ const PetOwnerRegister = ({onRegistrationSuccess}) => {
           error={errors.confirmPassword}
         />
 
-        <AuthButton>
+        {errors.submit && (
+          <p className="mt-3 text-sm text-red-500">
+            {errors.submit}
+          </p>
+        )}
+
+        <AuthButton loading={loading}>
           Create Account
         </AuthButton>
 

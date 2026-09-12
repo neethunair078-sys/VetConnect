@@ -10,6 +10,11 @@ export const loginUser = async (userData) => {
     return response.data;
 };
 
+export const doctorRegister = async (doctorData) => {
+  const response = await api.post("/auth/doctor/register/", doctorData);
+  return response.data;
+};
+
 export const logoutUser = async (refreshToken, accessToken) => {
     const response = await api.post('/auth/logout/',
         { 
@@ -23,4 +28,7 @@ export const logoutUser = async (refreshToken, accessToken) => {
     );
     return response.data;
 }
+
+
+
 
