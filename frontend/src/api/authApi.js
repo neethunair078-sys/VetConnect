@@ -11,7 +11,7 @@ export const loginUser = async (userData) => {
 };
 
 export const doctorRegister = async (doctorData) => {
-  const response = await api.post("/auth/doctor/register/", doctorData);
+  const response = await api.post("/doctors/register/", doctorData);
   return response.data;
 };
 

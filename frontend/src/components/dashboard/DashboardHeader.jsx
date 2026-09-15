@@ -6,7 +6,10 @@ import {
 
 const DashboardHeader = ({
   onMenuClick,
+  role = "PET_OWNER",
 }) => {
+
+  const portalTitle = role === "DOCTOR" ? "Doctor Portal" : "Pet Owner Portal";
 
   return (
     <header
@@ -41,7 +44,7 @@ const DashboardHeader = ({
           text-base
           text-[#7B6E67]
         ">
-          Pet Owner Portal
+          {portalTitle}
         </p>
 
       </div>

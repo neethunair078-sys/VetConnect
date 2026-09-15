@@ -7,13 +7,20 @@ import {
   HelpCircle,
   LogOut,
   X,
+  Users,
+  Video,
+  Clock3,
 } from "lucide-react";
 
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 
-const menuItems = [
+// =====================================================
+// PET OWNER NAVIGATION
+// =====================================================
+
+const petOwnerMenuItems = [
   {
     label: "Dashboard",
     icon: LayoutDashboard,
@@ -42,50 +49,140 @@ const menuItems = [
 ];
 
 
+// =====================================================
+// DOCTOR NAVIGATION
+// =====================================================
+
+const doctorMenuItems = [
+  {
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    path: "/doctor/dashboard",
+  },
+  {
+    label: "Appointments",
+    icon: CalendarDays,
+    path: "/doctor/appointments",
+  },
+  {
+    label: "Patients",
+    icon: Users,
+    path: "/doctor/patients",
+  },
+  {
+    label: "Consultations",
+    icon: Video,
+    path: "/doctor/consultations",
+  },
+  {
+    label: "Health Records",
+    icon: FileText,
+    path: "/doctor/health-records",
+  },
+  {
+    label: "Availability",
+    icon: Clock3,
+    path: "/doctor/availability",
+  },
+  {
+    label: "Settings",
+    icon: Settings,
+    path: "/doctor/settings",
+  },
+];
+
+
 const Sidebar = ({
   mobile = false,
   open = false,
   onClose,
+  role = "PET_OWNER",
 }) => {
 
-  const {user, logout } = useAuth();
+  const { user, logout } = useAuth();
+
   const navigate = useNavigate();
   const location = useLocation();
 
+
+  // =====================================================
+  // MOBILE VISIBILITY
+  // =====================================================
 
   if (mobile && !open) {
     return null;
   }
 
 
-  // Navigation handler
+  // =====================================================
+  // ROLE BASED MENU
+  // =====================================================
+
+  const menuItems =
+    role === "DOCTOR"
+      ? doctorMenuItems
+      : petOwnerMenuItems;
+
+
+  // =====================================================
+  // NAVIGATION
+  // =====================================================
+
   const handleNavigation = (path) => {
 
     navigate(path);
 
-    // Close mobile sidebar after navigation
     if (mobile && onClose) {
       onClose();
     }
   };
 
 
-  // Logout handler
+  // =====================================================
+  // LOGOUT
+  // =====================================================
+
   const handleLogout = async () => {
+
     await logout();
+
     navigate("/auth");
+
     if (mobile && onClose) {
       onClose();
     }
   };
+
+
+  // =====================================================
+  // ROLE BASED BOTTOM ACTION
+  // =====================================================
+
+  const bottomAction =
+    role === "DOCTOR"
+      ? {
+          label: "View Appointments",
+          path: "/doctor/appointments",
+        }
+      : {
+          label: "Book Vet Visit",
+          path: "/pet-owner/appointments/book",
+        };
+
+
+  const helpPath =
+    role === "DOCTOR"
+      ? "/doctor/help"
+      : "/pet-owner/help";
 
 
   return (
     <aside
       className={`
-        ${mobile
-          ? "fixed left-0 top-0 z-50 w-[260px]"
-          : "hidden lg:flex fixed left-0 top-0 z-30 w-[230px]"
+        ${
+          mobile
+            ? "fixed left-0 top-0 z-50 w-[260px]"
+            : "hidden lg:flex fixed left-0 top-0 z-30 w-[230px]"
         }
 
         h-screen
@@ -131,7 +228,7 @@ const Sidebar = ({
         </span>
 
 
-        {/* Mobile close button */}
+        {/* Mobile close */}
 
         {mobile && (
           <button
@@ -142,17 +239,12 @@ const Sidebar = ({
               ml-auto
               p-2
               rounded-full
-
               cursor-pointer
-
               text-[#665D57]
-
               transition-all
               duration-200
-
               hover:bg-[#EBB183]/20
               hover:text-[#62412D]
-
               active:scale-95
             "
           >
@@ -182,8 +274,14 @@ const Sidebar = ({
             "
           >
             <img
-              src={user?.profileImage || "/images/profile/user.jpg"}
-              alt={user?.fullname || "User Profile"}
+              src={
+                user?.profileImage ||
+                "/images/profile/user.jpg"
+              }
+              alt={
+                user?.fullname ||
+                "User Profile"
+              }
               className="w-full h-full object-cover"
             />
           </div>
@@ -198,10 +296,6 @@ const Sidebar = ({
             <p className="text-sm text-[#443A35]">
               {user?.fullname || "User"}
             </p>
-
-            {/* <p className="text-xs text-[#8B7E77]">
-              Premium Member
-            </p> */}
 
           </div>
 
@@ -220,16 +314,25 @@ const Sidebar = ({
 
           const Icon = item.icon;
 
-          // Check whether current page is active
+
+          // =================================================
+          // ACTIVE ROUTE
+          // =================================================
+
           const isActive =
-            location.pathname === item.path;
+            location.pathname === item.path ||
+            location.pathname.startsWith(
+              `${item.path}/`
+            );
 
 
           return (
             <button
               key={item.label}
               type="button"
-              onClick={() => handleNavigation(item.path)}
+              onClick={() =>
+                handleNavigation(item.path)
+              }
               className={`
                 w-full
                 flex
@@ -245,17 +348,18 @@ const Sidebar = ({
                 transition-all
                 duration-200
 
-                ${isActive
-                  ? `
-                      bg-[#EBB183]
-                      text-[#62412D]
-                      font-medium
-                    `
-                  : `
-                      text-[#665D57]
-                      hover:bg-[#EBB183]/20
-                      hover:text-[#62412D]
-                    `
+                ${
+                  isActive
+                    ? `
+                        bg-[#EBB183]
+                        text-[#62412D]
+                        font-medium
+                      `
+                    : `
+                        text-[#665D57]
+                        hover:bg-[#EBB183]/20
+                        hover:text-[#62412D]
+                      `
                 }
 
                 active:scale-[0.98]
@@ -283,13 +387,15 @@ const Sidebar = ({
       <div className="mt-auto px-5 pb-6 space-y-4">
 
 
-        {/* Book Vet Visit */}
+        {/* ===================================================
+            PRIMARY ACTION
+        =================================================== */}
 
         <button
           type="button"
           onClick={() =>
             handleNavigation(
-              "/pet-owner/appointments/book"
+              bottomAction.path
             )
           }
           className="
@@ -315,18 +421,18 @@ const Sidebar = ({
             active:scale-[0.98]
           "
         >
-          Book Vet Visit
+          {bottomAction.label}
         </button>
 
 
-        {/* Help Center */}
+        {/* ===================================================
+            HELP CENTER
+        =================================================== */}
 
         <button
           type="button"
           onClick={() =>
-            handleNavigation(
-              "/pet-owner/help"
-            )
+            handleNavigation(helpPath)
           }
           className="
             flex
@@ -350,7 +456,9 @@ const Sidebar = ({
         </button>
 
 
-        {/* Sign Out */}
+        {/* ===================================================
+            SIGN OUT
+        =================================================== */}
 
         <button
           type="button"

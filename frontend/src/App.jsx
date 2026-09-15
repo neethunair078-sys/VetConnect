@@ -14,6 +14,8 @@ import EditPetPage from "./pages/pet-owner/EditPetPage";
 import AppointmentsPage from "./pages/pet-owner/AppointmentsPage";
 import BookAppointmentPage from "./pages/pet-owner/BookAppointmentPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import DoctorDashboard from "./pages/dashboards/DoctorDashboard";
+import DoctorAppointments from "./pages/doctor/DoctorAppointments";
 // import Register from "./pages/Register";
 
 function App() {
@@ -29,6 +31,8 @@ function App() {
           <Route path="/auth" element={<AuthPage />} />
 
           <Route element={<ProtectedRoute />}>
+
+            {/* PET-OWNER  */}
             <Route path="/pet-owner/dashboard" element={<PetOwnerDashboard />} />
             <Route path="/pet-owner/pets" element={<PetsPage />} />
             <Route path="/pet-owner/pets/add" element={<AddPetPage />} />
@@ -36,6 +40,15 @@ function App() {
             <Route path="/pet-owner/pets/:id/edit" element={<EditPetPage />} />
             <Route path="/pet-owner/appointments" element={<AppointmentsPage />} />
             <Route path="/pet-owner/appointments/book" element={<BookAppointmentPage />} />
+
+            {/* DOCTOR   */}
+            <Route path="/doctor/dashboard" element={<DoctorDashboard /> }/>
+            <Route path="/doctor/appointments" element={<DoctorAppointments />} />
+            {/* <Route path="/doctor/availability" element={<DoctorAvailabilityPage />} /> */}
+            {/* <Route path="/doctor/patients" element={<DoctorPatientsPage />} /> */}
+            {/* <Route path="/doctor/consultations" element={<DoctorConsultationsPage />} /> */}
+            {/* <Route path="/doctor/health-records" element={<DoctorHealthRecordsPage />} /> */}
+            {/* <Route path="/doctor/settings" element={<DoctorSettingsPage />} /> */}
           </Route>
           
 
