@@ -1,3 +1,4 @@
+
 import {
   CalendarDays,
   Clock3,
@@ -15,57 +16,32 @@ const DoctorAppointments = () => {
     {
       id: 1,
       patient: "Bruno",
-      species: "Dog",
       breed: "Golden Retriever",
       owner: "Anu Thomas",
       date: "Today",
       time: "10:00 AM",
-      type: "Video Consultation",
-      status: "UPCOMING",
+      type: "General Consultation",
+      status: "CONFIRMED",
     },
     {
       id: 2,
       patient: "Luna",
-      species: "Cat",
       breed: "Persian",
       owner: "Rahul Menon",
       date: "Today",
       time: "11:30 AM",
       type: "Follow-up",
-      status: "UPCOMING",
+      status: "PENDING",
     },
     {
       id: 3,
       patient: "Max",
-      species: "Dog",
       breed: "Labrador",
       owner: "Meera Nair",
       date: "Today",
       time: "2:00 PM",
       type: "General Consultation",
-      status: "UPCOMING",
-    },
-    {
-      id: 4,
-      patient: "Coco",
-      species: "Dog",
-      breed: "Beagle",
-      owner: "Arun Kumar",
-      date: "Sep 16, 2026",
-      time: "10:30 AM",
-      type: "Follow-up",
-      status: "UPCOMING",
-    },
-    {
-      id: 5,
-      patient: "Milo",
-      species: "Cat",
-      breed: "British Shorthair",
-      owner: "Priya Joseph",
-      date: "Sep 17, 2026",
-      time: "3:00 PM",
-      type: "Video Consultation",
-      status: "UPCOMING",
+      status: "CONFIRMED",
     },
   ];
 
@@ -195,7 +171,7 @@ const DoctorAppointments = () => {
             </p>
 
             <p className="mt-1 text-xs text-[#786D67]">
-              Video consultations available
+              General Consultation available
             </p>
           </div>
 

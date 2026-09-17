@@ -4,10 +4,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
 from .models import DoctorProfile
-from .serializers import (
-    DoctorRegisterSerializer,
-    DoctorApprovalSerializer,
-)
+from .serializers import (DoctorRegisterSerializer, DoctorApprovalSerializer, ApprovedDoctorSerializer)
 from .permissions import IsAdminUser
 
 
@@ -146,3 +143,12 @@ class DoctorApprovalView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+
+class ApprovedDoctorsView(generics.ListAPIView):
+    serializer_class = ApprovedDoctorSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return DoctorProfile.objects.filter(approval_status=DoctorProfile.ApprovalStatus.APPROVED).select_related("user")

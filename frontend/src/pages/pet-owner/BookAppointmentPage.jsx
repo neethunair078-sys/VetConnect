@@ -1,40 +1,37 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   ArrowLeft,
   ArrowRight,
 } from "lucide-react";
 
+import toast from "react-hot-toast";
+
 import { useNavigate } from "react-router-dom";
+
+import toast from "react-hot-toast";
 
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 
-import BookingProgress
-  from "../../components/appointments/BookingProgress";
+import BookingProgress from "../../components/appointments/BookingProgress";
 
-import DoctorCard
-  from "../../components/appointments/DoctorCard";
+import DoctorCard from "../../components/appointments/DoctorCard";
 
-import AppointmentCalendar
-  from "../../components/appointments/AppointmentCalendar";
+import AppointmentCalendar from "../../components/appointments/AppointmentCalendar";
 
-import TimeSlotPicker
-  from "../../components/appointments/TimeSlotPicker";
+import TimeSlotPicker from "../../components/appointments/TimeSlotPicker";
 
-import BookingSummary
-  from "../../components/appointments/BookingSummary";
+import BookingSummary from "../../components/appointments/BookingSummary";
 
-import TelehealthReadiness
-  from "../../components/appointments/TelehealthReadiness";
+import TelehealthReadiness from "../../components/appointments/TelehealthReadiness";
 
-import { doctorsData }
-  from "../../data/doctorsData";
+import { getApprovedDoctors } from "../../api/doctorApi";
 
-import { availabilityData }
-  from "../../data/availabilityData";
+import { availabilityData } from "../../data/availabilityData";
 
-import { dashboardData }
-  from "../../data/dashboardData";
+import { dashboardData } from "../../data/dashboardData";
+
+import { createAppointment } from "../../api/appointmentApi";
 
 
 const BookAppointmentPage = () => {
@@ -45,45 +42,57 @@ const BookAppointmentPage = () => {
   // ==========================================
   // BOOKING STATE
   // ==========================================
+  
 
-  const [currentStep, setCurrentStep] =
-    useState(1);
+  const [currentStep, setCurrentStep] = useState(1);
 
+  const [selectedPet, setSelectedPet] = useState(dashboardData.pets[0] || null);
 
-  const [selectedPet, setSelectedPet] =
-    useState(
-      dashboardData.pets[0] || null
-    );
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
 
+  const [selectedDate, setSelectedDate] = useState(null);
 
-  const [selectedDoctor, setSelectedDoctor] =
-    useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
 
+  const [notes, setNotes] = useState("");
 
-  const [selectedDate, setSelectedDate] =
-    useState(null);
+  const [bookingLoading, setBookingLoading] = useState(false);
 
+  const [doctors, setDoctors] = useState([]);
 
-  const [selectedTime, setSelectedTime] =
-    useState(null);
+  const [doctorsLoading, setDoctorsLoading] = useState(true);
 
 
-  const [notes, setNotes] =
-    useState("");
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        setDoctorsLoading(true);
+
+        const data = await getApprovedDoctors();
+
+        setDoctors(data);
+      } catch (error) {
+        console.error(
+          "Failed to fetch approved doctors:",
+          error.response?.data || error.message
+        );
+
+        toast.error("Unable to load doctors. Please try again.");
+      } finally {
+        setDoctorsLoading(false);
+      }
+    };
+
+    fetchDoctors();
+  }, []);
+
 
 
   // ==========================================
   // CALENDAR MONTH
   // ==========================================
 
-  const [currentMonth, setCurrentMonth] =
-    useState(
-      new Date(
-        2026,
-        8,
-        1
-      )
-    );
+  const [currentMonth, setCurrentMonth] = useState(new Date(2026, 8, 1) );
 
 
   // ==========================================
@@ -126,21 +135,13 @@ const BookAppointmentPage = () => {
   // SELECT DOCTOR
   // ==========================================
 
-  const handleDoctorSelect = (
-    doctor
-  ) => {
+  const handleDoctorSelect = (doctor) => {
 
-    setSelectedDoctor(
-      doctor
-    );
+    setSelectedDoctor(doctor);
 
-    setSelectedDate(
-      null
-    );
+    setSelectedDate(null);
 
-    setSelectedTime(
-      null
-    );
+    setSelectedTime(null);
 
   };
 
@@ -149,17 +150,11 @@ const BookAppointmentPage = () => {
   // SELECT DATE
   // ==========================================
 
-  const handleDateSelect = (
-    date
-  ) => {
+  const handleDateSelect = (date) => {
 
-    setSelectedDate(
-      date
-    );
+    setSelectedDate(date);
 
-    setSelectedTime(
-      null
-    );
+    setSelectedTime(null);
 
   };
 
@@ -168,9 +163,7 @@ const BookAppointmentPage = () => {
   // CHANGE MONTH
   // ==========================================
 
-  const handleMonthChange = (
-    direction
-  ) => {
+  const handleMonthChange = (direction) => {
 
     setCurrentMonth(
       (previous) =>
@@ -190,18 +183,11 @@ const BookAppointmentPage = () => {
   // ==========================================
 
   const handleContinueToSchedule = () => {
-
     if (!selectedDoctor) {
       return;
     }
-
-
-    setCurrentStep(
-      2
-    );
-
+    setCurrentStep(2);
   };
-
 
   // ==========================================
   // STEP 2 → STEP 3
@@ -209,19 +195,10 @@ const BookAppointmentPage = () => {
 
   const handleContinueToConfirmation = () => {
 
-    if (
-      !selectedDoctor ||
-      !selectedDate ||
-      !selectedTime
-    ) {
+    if (!selectedDoctor || !selectedDate || !selectedTime) {
       return;
     }
-
-
-    setCurrentStep(
-      3
-    );
-
+    setCurrentStep(3);
   };
 
 
@@ -229,47 +206,55 @@ const BookAppointmentPage = () => {
   // CONFIRM BOOKING
   // ==========================================
 
-  const handleConfirmBooking = () => {
+  const handleConfirmBooking = async () => {
 
-    const bookingData = {
-      petId: selectedPet?.id,
-      doctorId: selectedDoctor?.id,
-      date: selectedDate,
-      time: selectedTime,
-      notes,
-      type: "Online Consultation",
-    };
+    if (!selectedPet || !selectedDoctor || !selectedDate || !selectedTime) {
+      toast.error("Please complete all appointment details.");
+      return;
+    }
 
+    try {
+      setBookingLoading(true);
 
-    console.log(
-      "Booking:",
-      bookingData
-    );
+      const bookingData = {
+        pet: selectedPet.id,
+        doctor: selectedDoctor.id,
+        appointment_date: selectedDate,
+        appointment_time: selectedTime,
+        appointment_type: "GENERAL",
+        reason: notes,
+      };
 
+      await createAppointment(bookingData);
 
-    /*
-      Later this becomes:
+      toast.success("Appointment booked successfully!");
 
-      await appointmentService.createAppointment(
-        bookingData
+      navigate("/pet-owner/appointments");
+
+    } catch (error) {
+      console.error(
+        "Appointment booking failed:",
+        error.response?.data || error.message
       );
 
-      Then:
+      const apiErrors = error.response?.data;
 
-      navigate(
-        "/pet-owner/appointments"
-      );
-    */
+      const errorMessage =
+        apiErrors?.appointment_date?.[0] ||
+        apiErrors?.appointment_time?.[0] ||
+        apiErrors?.appointment_type?.[0] ||
+        apiErrors?.pet?.[0] ||
+        apiErrors?.doctor?.[0] ||
+        apiErrors?.reason?.[0] ||
+        apiErrors?.non_field_errors?.[0] ||
+        apiErrors?.detail ||
+        "Unable to book appointment. Please try again.";
 
+      toast.error(errorMessage);
 
-    alert(
-      "Appointment booked successfully!"
-    );
-
-
-    navigate(
-      "/pet-owner/appointments"
-    );
+    } finally {
+      setBookingLoading(false);
+    }
 
   };
 
@@ -342,8 +327,7 @@ const BookAppointmentPage = () => {
               text-[#786D67]
             "
           >
-            Schedule an online consultation
-            for your furry family member.
+            Schedule an online consultation for your furry family member.
           </p>
 
         </div>
@@ -1204,33 +1188,28 @@ const BookAppointmentPage = () => {
 
                   <button
                     type="button"
-                    onClick={
-                      handleConfirmBooking
-                    }
-                    className="
-                      flex-1
-
-                      rounded-full
-
-                      bg-[#8B572F]
-
-                      py-3
-
-                      text-sm
-                      font-semibold
-
-                      text-white
-
-                      cursor-pointer
-
-                      hover:bg-[#744622]
-
-                      hover:-translate-y-0.5
-
-                      transition-all
-                    "
+                    onClick={handleConfirmBooking}
+                    disabled={bookingLoading}
+                    className="flex-1 rounded-full bg-[#8B572F] py-3 text-sm font-semibold text-white cursor-pointer hover:bg-[#744622] hover:-translate-y-0.5 transition-all"
                   >
-                    Confirm & Book Appointment
+                    {bookingLoading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <span
+                          className="
+                            h-4
+                            w-4
+                            rounded-full
+                            border-2
+                            border-white
+                            border-t-transparent
+                            animate-spin
+                          "
+                        />
+                        Booking...
+                      </span>
+                    ) : (
+                      "Confirm & Book Appointment"
+                    )}
                   </button>
 
                 </div>

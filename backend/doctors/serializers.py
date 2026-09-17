@@ -172,3 +172,36 @@ class DoctorApprovalSerializer(serializers.ModelSerializer):
 
     def get_fullName(self, obj):
         return obj.user.get_full_name()
+
+
+
+
+class ApprovedDoctorSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
+    email = serializers.EmailField(
+        source="user.email",
+        read_only=True,
+    )
+
+    phone = serializers.CharField(
+        source="user.phone",
+        read_only=True,
+    )
+
+    class Meta:
+        model = DoctorProfile
+        fields = [
+            "id",
+            "name",
+            "email",
+            "phone",
+            "license_number",
+            "specialization",
+            "approval_status",
+        ]
+
+        read_only_fields = fields
+
+    def get_name(self, obj):
+        return obj.user.get_full_name()
