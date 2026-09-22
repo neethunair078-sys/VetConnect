@@ -205,3 +205,96 @@ class ApprovedDoctorSerializer(serializers.ModelSerializer):
 
     def get_name(self, obj):
         return obj.user.get_full_name()
+
+
+
+
+class DoctorProfileSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(
+        source="user.first_name",
+        required=True
+    )
+    last_name = serializers.CharField(
+        source="user.last_name",
+        required=True
+    )
+    email = serializers.EmailField(
+        source="user.email",
+        read_only=True
+    )
+    phone = serializers.CharField(
+        source="user.phone",
+        required=True
+    )
+    profile_image = serializers.ImageField(
+        source="user.profile_image",
+        required=False,
+        allow_null=True
+    )
+
+    class Meta:
+        model = DoctorProfile
+
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+            "profile_image",
+            "license_number",
+            "specialization",
+            "qualification",
+            "years_of_experience",
+            # "clinic_name",
+            # "clinic_address",
+            "consultation_fee",
+            "bio",
+            # "consultation_mode",
+            "languages",
+            "approval_status",
+            "is_profile_complete",
+        ]
+
+        read_only_fields = [
+            "id",
+            "email",
+            "license_number",
+            "specialization",
+            "approval_status",
+            "is_profile_complete",
+        ]
+
+    def update(self, instance, validated_data):
+
+        user_data = validated_data.pop("user", {})
+
+        user = instance.user
+
+        user.first_name = user_data.get(
+            "first_name",
+            user.first_name
+        )
+
+        user.last_name = user_data.get(
+            "last_name",
+            user.last_name
+        )
+
+        user.phone = user_data.get(
+            "phone",
+            user.phone
+        )
+
+        if "profile_image" in user_data:
+            user.profile_image = user_data["profile_image"]
+
+        user.save()
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.is_profile_complete = True
+        instance.save()
+
+        return instance

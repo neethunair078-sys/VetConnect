@@ -32,6 +32,20 @@ export const AuthProvider = ({ children }) => {
 
     };
 
+
+    const updateUser = (updatedUserData) => {
+        setUser((currentUser) => {
+            const updatedUser = {
+                ...currentUser,
+                ...updatedUserData,
+            };
+
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+
+            return updatedUser;
+        });
+    };
+
     const logout = async () => {
         try {
             if (accessToken && refreshToken) {
@@ -60,6 +74,7 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated: !!accessToken,
         login,
         logout,
+        updateUser,
     };
 
     return (

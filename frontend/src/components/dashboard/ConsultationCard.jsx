@@ -1,16 +1,6 @@
-import {
-  Video,
-  Building2,
-} from "lucide-react";
+import { Video, Building2 } from "lucide-react";
 
-const ConsultationCard = ({
-  consultation,
-}) => {
-
-  const Icon =
-    consultation.icon === "video"
-      ? Video
-      : Building2;
+const ConsultationCard = ({ consultation }) => {
 
   return (
     <div
@@ -25,7 +15,6 @@ const ConsultationCard = ({
         shadow-[0_10px_30px_rgba(70,45,30,0.04)]
       "
     >
-
       <div
         className="
           w-12
@@ -38,12 +27,14 @@ const ConsultationCard = ({
           shrink-0
         "
       >
-        <Icon size={19} />
+         <img
+          src={consultation.petImage}
+          alt={consultation.pet}
+          className="w-full h-full object-cover"
+        />
       </div>
 
-
       <div className="flex-1 min-w-0">
-
         <p
           className="
             text-sm
@@ -63,29 +54,28 @@ const ConsultationCard = ({
         >
           {consultation.type} - {consultation.pet}
         </p>
-
       </div>
 
-
       <div className="text-right">
-
-        <p className="
+        <p
+          className="
           text-sm
           font-medium
           text-[#4A403A]
-        ">
-          {consultation.date}
+        "
+        >
+          {consultation.displayDate}
         </p>
 
-        <p className="
+        <p
+          className="
           text-xs
           text-[#8B7E77]
-        ">
+        "
+        >
           {consultation.time}
         </p>
-
       </div>
-
     </div>
   );
 };

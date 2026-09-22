@@ -1,34 +1,34 @@
 import SectionHeader from "./SectionHeader";
 import ConsultationCard from "./ConsultationCard";
-import { useNavigate } from "react-router-dom";
 
 const UpcomingConsultations = ({
   appointments = [],
+  loading = false,
   onViewAll,
 }) => {
-
-  const navigate = useNavigate()
-
   return (
     <section>
-
       <SectionHeader
         title="Upcoming Consultations"
         action="View All"
-        onAction={() => navigate("/pet-owner/appointments")}
+        onAction={onViewAll}
       />
 
       <div className="space-y-4">
-
-        {appointments.map((item) => (
-          <ConsultationCard
-            key={item.id}
-            consultation={item}
-          />
-        ))}
-
+        {loading ? (
+          <div className="py-8 text-center text-sm text-[#786D67]">
+            Loading consultations...
+          </div>
+        ) : appointments.length > 0 ? (
+          appointments.map((item) => (
+            <ConsultationCard key={item.id} consultation={item} />
+          ))
+        ) : (
+          <div className="py-8 text-center text-sm text-[#786D67]">
+            No upcoming consultations.
+          </div>
+        )}
       </div>
-
     </section>
   );
 };

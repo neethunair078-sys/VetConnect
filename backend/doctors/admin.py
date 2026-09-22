@@ -43,6 +43,7 @@ def reject_doctors(modeladmin, request, queryset):
 class DoctorProfileAdmin(admin.ModelAdmin):
 
     list_display = (
+        "id",
         "get_full_name",
         "get_email",
         "get_phone",

@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 
 import {
   ArrowLeft,
   ArrowRight,
 } from "lucide-react";
-
-import toast from "react-hot-toast";
 
 import { useNavigate } from "react-router-dom";
 
@@ -25,19 +24,18 @@ import BookingSummary from "../../components/appointments/BookingSummary";
 
 import TelehealthReadiness from "../../components/appointments/TelehealthReadiness";
 
-import { getApprovedDoctors } from "../../api/doctorApi";
-
-import { availabilityData } from "../../data/availabilityData";
-
-import { dashboardData } from "../../data/dashboardData";
 
 import { createAppointment } from "../../api/appointmentApi";
+
+import { getApprovedDoctors } from "../../api/doctorApi";
+
+import { getDoctorAvailability } from "../../api/availabilityApi";
 
 
 const BookAppointmentPage = () => {
 
   const navigate = useNavigate();
-
+  const pets = useSelector((state) => state.pets.pets);
 
   // ==========================================
   // BOOKING STATE
@@ -46,7 +44,7 @@ const BookAppointmentPage = () => {
 
   const [currentStep, setCurrentStep] = useState(1);
 
-  const [selectedPet, setSelectedPet] = useState(dashboardData.pets[0] || null);
+  const [selectedPet, setSelectedPet] = useState(null);
 
   const [selectedDoctor, setSelectedDoctor] = useState(null);
 
@@ -59,8 +57,17 @@ const BookAppointmentPage = () => {
   const [bookingLoading, setBookingLoading] = useState(false);
 
   const [doctors, setDoctors] = useState([]);
-
   const [doctorsLoading, setDoctorsLoading] = useState(true);
+
+  const [doctorAvailability, setDoctorAvailability] = useState([]);
+  const [availabilityLoading, setAvailabilityLoading] = useState(false);
+
+
+  useEffect(() => {
+    if (pets.length > 0 && !selectedPet) {
+      setSelectedPet(pets[0]);
+    }
+  }, [pets, selectedPet]);
 
 
   useEffect(() => {
@@ -70,7 +77,16 @@ const BookAppointmentPage = () => {
 
         const data = await getApprovedDoctors();
 
-        setDoctors(data);
+        const mappedDoctors = data.map((doctor) => ({
+          ...doctor,
+
+          // Temporary UI values
+          image: "/images/doctors/default-doctor.jpg",
+          rating: 0,
+          reviews: 0,
+        }));
+
+        setDoctors(mappedDoctors);
       } catch (error) {
         console.error(
           "Failed to fetch approved doctors:",
@@ -87,6 +103,41 @@ const BookAppointmentPage = () => {
   }, []);
 
 
+  useEffect(() => {
+    const fetchAvailability = async () => {
+      if (!selectedDoctor) {
+        setDoctorAvailability([]);
+        return;
+      }
+
+      try {
+        setAvailabilityLoading(true);
+
+        const data = await getDoctorAvailability(
+          selectedDoctor.id
+        );
+
+        setDoctorAvailability(data);
+      } catch (error) {
+        console.error(
+          "Failed to fetch doctor availability:",
+          error.response?.data || error.message
+        );
+
+        setDoctorAvailability([]);
+
+        toast.error(
+          "Unable to load doctor availability."
+        );
+      } finally {
+        setAvailabilityLoading(false);
+      }
+    };
+
+    fetchAvailability();
+  }, [selectedDoctor]);
+
+
 
   // ==========================================
   // CALENDAR MONTH
@@ -99,36 +150,39 @@ const BookAppointmentPage = () => {
   // AVAILABLE DATES
   // ==========================================
 
-  const availableDates =
-    useMemo(() => {
-
-      if (!selectedDoctor) {
-        return [];
-      }
-
-
-      return Object.keys(
-        availabilityData[
-          selectedDoctor.id
-        ] || {}
-      );
-
-    }, [
-      selectedDoctor,
-    ]);
-
+  const availableDates = useMemo(() => {
+    return doctorAvailability
+      .filter((availability) => availability.is_available)
+      .map((availability) => availability.date);
+  }, [doctorAvailability]);
 
   // ==========================================
   // AVAILABLE TIMES
   // ==========================================
 
-  const availableTimes =
-    selectedDoctor &&
-    selectedDate
-      ? availabilityData[
-          selectedDoctor.id
-        ]?.[selectedDate] || []
-      : [];
+const availableTimes = useMemo(() => {
+  if (!selectedDate) {
+    return [];
+  }
+
+  const availability = doctorAvailability.find(
+    (item) =>
+      item.date === selectedDate &&
+      item.is_available
+  );
+
+  if (!availability) {
+    return [];
+  }
+
+  return generateTimeSlots(
+    availability.start_time,
+    availability.end_time
+  );
+}, [
+  selectedDate,
+  doctorAvailability,
+]);
 
 
   // ==========================================
@@ -142,6 +196,8 @@ const BookAppointmentPage = () => {
     setSelectedDate(null);
 
     setSelectedTime(null);
+
+    setDoctorAvailability([]);
 
   };
 
@@ -206,6 +262,26 @@ const BookAppointmentPage = () => {
   // CONFIRM BOOKING
   // ==========================================
 
+  const convertTimeToApiFormat = (time) => {
+    const [timePart, modifier] = time.split(" ");
+
+    let [hours, minutes] = timePart
+      .split(":")
+      .map(Number);
+
+    if (modifier === "PM" && hours !== 12) {
+      hours += 12;
+    }
+
+    if (modifier === "AM" && hours === 12) {
+      hours = 0;
+    }
+
+    return `${String(hours).padStart(2, "0")}:${String(
+      minutes
+    ).padStart(2, "0")}:00`;
+  };
+
   const handleConfirmBooking = async () => {
 
     if (!selectedPet || !selectedDoctor || !selectedDate || !selectedTime) {
@@ -220,7 +296,7 @@ const BookAppointmentPage = () => {
         pet: selectedPet.id,
         doctor: selectedDoctor.id,
         appointment_date: selectedDate,
-        appointment_time: selectedTime,
+        appointment_time: convertTimeToApiFormat(selectedTime),
         appointment_type: "GENERAL",
         reason: notes,
       };
@@ -285,15 +361,7 @@ const BookAppointmentPage = () => {
   return (
     <DashboardLayout>
 
-      <div
-        className="
-          max-w-[1200px]
-
-          mx-auto
-
-          w-full
-        "
-      >
+      <div className="max-w-[1200px] mx-auto w-full">
 
         {/* =====================================
             HEADER
@@ -301,35 +369,13 @@ const BookAppointmentPage = () => {
 
         <div className="mb-8">
 
-          <h1
-            className="
-              text-3xl
-              sm:text-4xl
-
-              font-bold
-
-              tracking-tight
-
-              text-[#8B572F]
-            "
-          >
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#8B572F]">
             Book Appointment
           </h1>
 
-
-          <p
-            className="
-              mt-2
-
-              text-sm
-              sm:text-base
-
-              text-[#786D67]
-            "
-          >
+          <p className="mt-2 text-sm sm:text-base text-[#786D67]">
             Schedule an online consultation for your furry family member.
           </p>
-
         </div>
 
 
@@ -427,7 +473,7 @@ const BookAppointmentPage = () => {
                     "
                   >
 
-                    {dashboardData.pets.map(
+                    {pets.map(
                       (pet) => {
 
                         const selected =
@@ -507,42 +553,37 @@ const BookAppointmentPage = () => {
 
                 {/* Doctors */}
 
-                <div
-                  className="
-                    mt-7
+                {doctorsLoading ? (
+                  <div className="py-10 text-center text-sm text-[#786D67]">
+                    Loading doctors...
+                  </div>
+                ) : doctors.length === 0 ? (
+                  <div className="py-10 text-center text-sm text-[#786D67]">
+                    No approved doctors are currently available.
+                  </div>
+                ) : (
 
-                    grid
+                  <div className="mt-7 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {doctors.map(
+                      (doctor) => (
 
-                    grid-cols-1
-                    md:grid-cols-2
+                        <DoctorCard 
+                          key={doctor.id} 
+                          doctor={doctor}
+                          selected={
+                            selectedDoctor?.id ===
+                            doctor.id
+                          }
+                          onSelect={
+                            handleDoctorSelect
+                          }
+                        />
 
-                    gap-4
-                  "
-                >
+                      )
+                    )}
 
-                  {doctorsData.map(
-                    (doctor) => (
-
-                      <DoctorCard
-                        key={doctor.id}
-
-                        doctor={doctor}
-
-                        selected={
-                          selectedDoctor?.id ===
-                          doctor.id
-                        }
-
-                        onSelect={
-                          handleDoctorSelect
-                        }
-                      />
-
-                    )
-                  )}
-
-                </div>
-
+                  </div>
+                )}
 
                 {/* Continue */}
 
@@ -657,47 +698,28 @@ const BookAppointmentPage = () => {
                   "
                 >
 
-                  <AppointmentCalendar
-                    currentMonth={
-                      currentMonth
-                    }
-
-                    selectedDate={
-                      selectedDate
-                    }
-
-                    availableDates={
-                      availableDates
-                    }
-
-                    onMonthChange={
-                      handleMonthChange
-                    }
-
-                    onDateSelect={
-                      handleDateSelect
-                    }
-                  />
+                  {availabilityLoading ? (
+                    <div className="py-10 text-center text-sm text-[#786D67]">
+                      Loading available dates...
+                    </div>
+                  ) : (
+                    <AppointmentCalendar
+                      currentMonth={currentMonth}
+                      selectedDate={selectedDate}
+                      availableDates={availableDates}
+                      onMonthChange={handleMonthChange}
+                      onDateSelect={handleDateSelect}
+                    />
+                  )}
 
 
                   <div>
 
                     <TimeSlotPicker
-                      selectedDate={
-                        selectedDate
-                      }
-
-                      slots={
-                        availableTimes
-                      }
-
-                      selectedTime={
-                        selectedTime
-                      }
-
-                      onSelectTime={
-                        setSelectedTime
-                      }
+                      selectedDate={selectedDate}
+                      slots={availableTimes}
+                      selectedTime={selectedTime}
+                      onSelectTime={setSelectedTime}
                     />
 
                   </div>
@@ -1299,6 +1321,45 @@ const formatDate = (
       year: "numeric",
     }
   );
+};
+
+
+const generateTimeSlots = (startTime, endTime) => {
+  const slots = [];
+
+  let [hours, minutes] = startTime.split(":").map(Number);
+
+  const [endHours, endMinutes] = endTime.split(":").map(Number);
+
+  const current = new Date();
+
+  current.setHours(hours);
+  current.setMinutes(minutes);
+  current.setSeconds(0);
+
+  const end = new Date();
+
+  end.setHours(endHours);
+  end.setMinutes(endMinutes);
+  end.setSeconds(0);
+
+  while (current < end) {
+    slots.push(
+      current.toLocaleTimeString(
+        "en-US",
+        {
+          hour: "numeric",
+          minute: "2-digit",
+        }
+      )
+    );
+
+    current.setMinutes(
+      current.getMinutes() + 30
+    );
+  }
+
+  return slots;
 };
 
 

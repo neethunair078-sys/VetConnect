@@ -1,11 +1,13 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
+from rest_framework.exceptions import PermissionDenied
 
 from .models import DoctorProfile
-from .serializers import (DoctorRegisterSerializer, DoctorApprovalSerializer, ApprovedDoctorSerializer)
+from .serializers import (DoctorRegisterSerializer, DoctorApprovalSerializer, ApprovedDoctorSerializer, DoctorProfileSerializer)
 from .permissions import IsAdminUser
+
 
 
 class DoctorRegisterView(generics.GenericAPIView):
@@ -152,3 +154,20 @@ class ApprovedDoctorsView(generics.ListAPIView):
 
     def get_queryset(self):
         return DoctorProfile.objects.filter(approval_status=DoctorProfile.ApprovalStatus.APPROVED).select_related("user")
+
+
+
+
+class DoctorProfileView(generics.RetrieveUpdateAPIView):
+    serializer_class = DoctorProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        user = self.request.user
+
+        if user.role != "DOCTOR":
+            raise PermissionDenied(
+                "Only doctors can access their doctor profile."
+            )
+
+        return DoctorProfile.objects.select_related("user").get(user=user)

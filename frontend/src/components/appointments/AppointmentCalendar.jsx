@@ -1,7 +1,4 @@
-import {
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const AppointmentCalendar = ({
   currentMonth,
@@ -10,70 +7,35 @@ const AppointmentCalendar = ({
   onMonthChange,
   onDateSelect,
 }) => {
+  const year = currentMonth.getFullYear();
 
-  const year =
-    currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
 
-  const month =
-    currentMonth.getMonth();
+  const monthName = currentMonth.toLocaleString("default", {
+    month: "long",
+  });
 
-  const monthName =
-    currentMonth.toLocaleString(
-      "default",
-      {
-        month: "long",
-      }
-    );
+  const firstDay = new Date(year, month, 1).getDay();
 
-
-  const firstDay =
-    new Date(
-      year,
-      month,
-      1
-    ).getDay();
-
-
-  const daysInMonth =
-    new Date(
-      year,
-      month + 1,
-      0
-    ).getDate();
-
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   const days = [];
 
-  for (
-    let i = 0;
-    i < firstDay;
-    i++
-  ) {
+  for (let i = 0; i < firstDay; i++) {
     days.push(null);
   }
 
-  for (
-    let day = 1;
-    day <= daysInMonth;
-    day++
-  ) {
+  for (let day = 1; day <= daysInMonth; day++) {
     days.push(day);
   }
 
-
   const createDateKey = (day) => {
+    const m = String(month + 1).padStart(2, "0");
 
-    const m =
-      String(month + 1)
-        .padStart(2, "0");
-
-    const d =
-      String(day)
-        .padStart(2, "0");
+    const d = String(day).padStart(2, "0");
 
     return `${year}-${m}-${d}`;
   };
-
 
   return (
     <div
@@ -89,7 +51,6 @@ const AppointmentCalendar = ({
         sm:p-6
       "
     >
-
       {/* Header */}
 
       <div
@@ -99,7 +60,6 @@ const AppointmentCalendar = ({
           justify-between
         "
       >
-
         <button
           type="button"
           onClick={() => onMonthChange(-1)}
@@ -123,7 +83,6 @@ const AppointmentCalendar = ({
           <ChevronLeft size={18} />
         </button>
 
-
         <h3
           className="
             font-semibold
@@ -132,7 +91,6 @@ const AppointmentCalendar = ({
         >
           {monthName} {year}
         </h3>
-
 
         <button
           type="button"
@@ -156,9 +114,7 @@ const AppointmentCalendar = ({
         >
           <ChevronRight size={18} />
         </button>
-
       </div>
-
 
       {/* Weekdays */}
 
@@ -170,17 +126,7 @@ const AppointmentCalendar = ({
           mt-6
         "
       >
-
-        {[
-          "Su",
-          "Mo",
-          "Tu",
-          "We",
-          "Th",
-          "Fr",
-          "Sa",
-        ].map((day) => (
-
+        {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
           <div
             key={day}
             className="
@@ -195,11 +141,8 @@ const AppointmentCalendar = ({
           >
             {day}
           </div>
-
         ))}
-
       </div>
-
 
       {/* Dates */}
 
@@ -213,32 +156,28 @@ const AppointmentCalendar = ({
           mt-3
         "
       >
-
         {days.map((day, index) => {
-
           if (!day) {
-            return (
-              <div
-                key={index}
-                className="h-9"
-              />
-            );
+            return <div key={index} className="h-9" />;
           }
 
+          const today = new Date();
 
-          const dateKey =
-            createDateKey(day);
-
-
-          const available =
-            availableDates.includes(
-              dateKey
-            );
+          const todayKey = [
+            today.getFullYear(),
+            String(today.getMonth() + 1).padStart(2, "0"),
+            String(today.getDate()).padStart(2, "0"),
+          ].join("-");
 
 
-          const selected =
-            selectedDate === dateKey;
 
+          const dateKey = createDateKey(day);
+
+          const isPast = dateKey < todayKey;
+
+          const available = availableDates.includes(dateKey) && !isPast;
+
+          const selected = selectedDate === dateKey;
 
           return (
             <div
@@ -248,15 +187,10 @@ const AppointmentCalendar = ({
                 justify-center
               "
             >
-
               <button
                 type="button"
                 disabled={!available}
-                onClick={() =>
-                  onDateSelect(
-                    dateKey
-                  )
-                }
+                onClick={() => onDateSelect(dateKey)}
                 className={`
                   w-9
                   h-9
@@ -275,12 +209,12 @@ const AppointmentCalendar = ({
                         font-semibold
                       `
                       : available
-                      ? `
+                        ? `
                         text-[#302925]
                         cursor-pointer
                         hover:bg-[#F6EADF]
                       `
-                      : `
+                        : `
                         text-[#C8C0BB]
                         cursor-not-allowed
                       `
@@ -289,13 +223,10 @@ const AppointmentCalendar = ({
               >
                 {day}
               </button>
-
             </div>
           );
         })}
-
       </div>
-
 
       {/* Legend */}
 
@@ -313,9 +244,7 @@ const AppointmentCalendar = ({
           text-[#786D67]
         "
       >
-
         <div className="flex items-center gap-2">
-
           <span
             className="
               w-2.5
@@ -326,14 +255,10 @@ const AppointmentCalendar = ({
               bg-[#8B572F]
             "
           />
-
           Selected
-
         </div>
 
-
         <div className="flex items-center gap-2">
-
           <span
             className="
               w-2.5
@@ -345,13 +270,9 @@ const AppointmentCalendar = ({
               border-[#B98A68]
             "
           />
-
           Available
-
         </div>
-
       </div>
-
     </div>
   );
 };
