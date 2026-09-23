@@ -10,8 +10,8 @@ const Button = ({
 
   const variants = {
     primary: `
-      bg-primary
-      text-text-primary
+      bg-vet-primary
+      text-vet-text-primary
       hover:bg-[#E3A674]
       hover:shadow-md
     `,
@@ -20,7 +20,7 @@ const Button = ({
       bg-white
       border
       border-secondary
-      text-text-primary
+      text-vet-text-primary
       hover:bg-[#F8F4F1]
       hover:border-[#D8CEC7]
     `,

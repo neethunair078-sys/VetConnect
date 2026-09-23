@@ -49,8 +49,8 @@ const BookingProgress = ({ currentStep }) => {
 
                     ${
                       active
-                        ? "bg-[#8B572F] text-white"
-                        : "bg-[#E9E5E2] text-[#786D67]"
+                        ? "bg-vet-primary-dark text-white"
+                        : "bg-[#E9E5E2] text-vet-text-secondary"
                     }
                   `}
                 >
@@ -66,7 +66,7 @@ const BookingProgress = ({ currentStep }) => {
                     ${
                       active
                         ? "text-[#8B572F] font-medium"
-                        : "text-[#786D67]"
+                        : "text-vet-text-secondary"
                     }
                   `}
                 >

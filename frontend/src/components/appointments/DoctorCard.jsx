@@ -67,7 +67,7 @@ const DoctorCard = ({
               text-base
               font-semibold
 
-              text-[#302925]
+              text-vet-text-primary
             "
           >
             {doctor.name}
@@ -79,7 +79,7 @@ const DoctorCard = ({
 
               text-sm
 
-              text-[#786D67]
+              text-vet-text-secondary
             "
           >
             {doctor.specialization}
@@ -105,7 +105,7 @@ const DoctorCard = ({
 
             {doctor.rating}
 
-            <span className="text-[#786D67]">
+            <span className="text-vet-text-secondary">
               ({doctor.reviews} reviews)
             </span>
           </div>
@@ -136,7 +136,7 @@ const DoctorCard = ({
 
           ${
             selected
-              ? "bg-[#8B572F] text-white hover:bg-[#744622]"
+              ? "bg-vet-primary-dark text-white hover:bg-vet-primary-dark-hover"
               : "border border-[#B98A68] text-[#5F422F] hover:bg-[#FBF3EE]"
           }
         `}

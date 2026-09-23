@@ -16,7 +16,7 @@ const UpcomingConsultations = ({
 
       <div className="space-y-4">
         {loading ? (
-          <div className="py-8 text-center text-sm text-[#786D67]">
+          <div className="py-8 text-center text-sm text-vet-text-secondary">
             Loading consultations...
           </div>
         ) : appointments.length > 0 ? (
@@ -24,7 +24,7 @@ const UpcomingConsultations = ({
             <ConsultationCard key={item.id} consultation={item} />
           ))
         ) : (
-          <div className="py-8 text-center text-sm text-[#786D67]">
+          <div className="py-8 text-center text-sm text-vet-text-secondary">
             No upcoming consultations.
           </div>
         )}

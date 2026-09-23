@@ -168,7 +168,7 @@ const PetOwnerSignIn = () => {
 
       <div className="text-center mt-16">
 
-        <h2 className="text-[27px] font-semibold text-text-primary">
+        <h2 className="text-[27px] font-semibold text-vet-text-primary">
           Welcome Back
         </h2>
 

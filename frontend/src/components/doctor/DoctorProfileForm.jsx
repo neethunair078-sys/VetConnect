@@ -60,11 +60,11 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
 
           qualification: data.qualification || "",
           years_of_experience: data.years_of_experience ?? "",
-        //   clinic_name: data.clinic_name || "",
-        //   clinic_address: data.clinic_address || "",
+          //   clinic_name: data.clinic_name || "",
+          //   clinic_address: data.clinic_address || "",
           consultation_fee: data.consultation_fee ?? "",
           bio: data.bio || "",
-        //   consultation_mode: data.consultation_mode || "",
+          //   consultation_mode: data.consultation_mode || "",
           languages: data.languages || [],
         });
 
@@ -157,15 +157,15 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
 
       formData.append("years_of_experience", profile.years_of_experience);
 
-    //   formData.append("clinic_name", profile.clinic_name);
+      //   formData.append("clinic_name", profile.clinic_name);
 
-    //   formData.append("clinic_address", profile.clinic_address);
+      //   formData.append("clinic_address", profile.clinic_address);
 
       formData.append("consultation_fee", profile.consultation_fee);
 
       formData.append("bio", profile.bio);
 
-    //   formData.append("consultation_mode", profile.consultation_mode);
+      //   formData.append("consultation_mode", profile.consultation_mode);
 
       formData.append("languages", JSON.stringify(profile.languages));
 
@@ -181,15 +181,24 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
 
       const updatedProfile = response.data;
 
-      updateUser({
-        first_name: updatedProfile.first_name,
-        last_name: updatedProfile.last_name,
-        phone: updatedProfile.phone,
-        profileImage: updatedProfile.profile_image,
+      const userData = {
         fullName: [updatedProfile.first_name, updatedProfile.last_name]
-            .filter(Boolean)
-            .join(" "),
-      });
+          .filter(Boolean)
+          .join(" "),
+
+        phone: updatedProfile.phone,
+
+        doctorProfile: {
+          approvalStatus: updatedProfile.approval_status,
+          isProfileComplete: updatedProfile.is_profile_complete,
+        },
+      };
+
+      if (updatedProfile.profile_image) {
+        userData.profileImage = updatedProfile.profile_image;
+      }
+
+      updateUser(userData);
 
       toast.success(
         isCompleteMode
@@ -230,7 +239,7 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
 
   if (loading) {
     return (
-      <div className="py-12 text-center text-sm text-[#786D67]">
+      <div className="py-12 text-center text-sm text-vet-text-secondary">
         Loading your profile...
       </div>
     );
@@ -242,7 +251,7 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
           PROFILE PHOTO
       ====================================== */}
 
-      <section className="rounded-[26px] bg-white border border-[#EEE8E4] p-6 sm:p-8">
+      <section className="rounded-[26px] bg-white border border-vet-border p-6 sm:p-8">
         <div className="flex flex-col sm:flex-row items-center gap-5">
           <div className="relative">
             <div className="w-24 h-24 rounded-full overflow-hidden bg-[#F3EEEA] border-4 border-[#FBF7F4]">
@@ -268,13 +277,13 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
                 w-8
                 h-8
                 rounded-full
-                bg-[#8B572F]
+                bg-vet-primary-dark
                 text-white
                 flex
                 items-center
                 justify-center
                 cursor-pointer
-                hover:bg-[#744622]
+                hover:bg-vet-primary-dark-hover
                 transition
               "
             >
@@ -291,11 +300,11 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
           </div>
 
           <div className="text-center sm:text-left">
-            <h2 className="text-lg font-semibold text-[#302925]">
+            <h2 className="text-lg font-semibold text-vet-text-primary">
               Profile Photo
             </h2>
 
-            <p className="mt-1 text-sm text-[#786D67]">
+            <p className="mt-1 text-sm text-vet-text-secondary">
               Upload a professional photo for your doctor profile.
             </p>
           </div>
@@ -306,7 +315,7 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
           PERSONAL INFORMATION
       ====================================== */}
 
-      <section className="rounded-[26px] bg-white border border-[#EEE8E4] p-6 sm:p-8">
+      <section className="rounded-[26px] bg-white border border-vet-border p-6 sm:p-8">
         <SectionHeading title="Personal Information" />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -347,7 +356,7 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
           PROFESSIONAL INFORMATION
       ====================================== */}
 
-      <section className="rounded-[26px] bg-white border border-[#EEE8E4] p-6 sm:p-8">
+      <section className="rounded-[26px] bg-white border border-vet-border p-6 sm:p-8">
         <SectionHeading title="Professional Information" />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -389,7 +398,7 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
           CLINIC INFORMATION
       ====================================== */}
 
-      {/* <section className="rounded-[26px] bg-white border border-[#EEE8E4] p-6 sm:p-8">
+      {/* <section className="rounded-[26px] bg-white border border-vet-border p-6 sm:p-8">
         <SectionHeading title="Clinic Information" />
 
         <div className="space-y-5">
@@ -412,7 +421,7 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
               onChange={handleChange}
               required
               rows={3}
-              className="w-full rounded-2xl border border-[#E5DDD8] bg-[#FCFAF9] px-4 py-3 text-sm text-[#302925] outline-none focus:border-[#B98A68] resize-none"
+              className="w-full rounded-2xl border border-[#E5DDD8] bg-[#FCFAF9] px-4 py-3 text-sm text-vet-text-primary outline-none focus:border-[#B98A68] resize-none"
             />
           </div>
         </div>
@@ -422,7 +431,7 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
           CONSULTATION DETAILS
       ====================================== */}
 
-      <section className="rounded-[26px] bg-white border border-[#EEE8E4] p-6 sm:p-8">
+      <section className="rounded-[26px] bg-white border border-vet-border p-6 sm:p-8">
         <SectionHeading title="Consultation Details" />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -447,7 +456,7 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
               value={profile.consultation_mode}
               onChange={handleChange}
               required
-              className="w-full rounded-2xl border border-[#E5DDD8] bg-[#FCFAF9] px-4 py-3 text-sm text-[#302925] outline-none focus:border-[#B98A68]"
+              className="w-full rounded-2xl border border-[#E5DDD8] bg-[#FCFAF9] px-4 py-3 text-sm text-vet-text-primary outline-none focus:border-[#B98A68]"
             >
               <option value="">Select consultation mode</option>
 
@@ -470,7 +479,7 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
               onChange={handleLanguagesChange}
               placeholder="English, Malayalam, Hindi"
               required
-              className="w-full rounded-2xl border border-[#E5DDD8] bg-[#FCFAF9] px-4 py-3 text-sm text-[#302925] outline-none focus:border-[#B98A68]"
+              className="w-full rounded-2xl border border-[#E5DDD8] bg-[#FCFAF9] px-4 py-3 text-sm text-vet-text-primary outline-none focus:border-[#B98A68]"
             />
 
             <p className="mt-2 text-xs text-[#8B7E77]">
@@ -484,7 +493,7 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
           ABOUT
       ====================================== */}
 
-      <section className="rounded-[26px] bg-white border border-[#EEE8E4] p-6 sm:p-8">
+      <section className="rounded-[26px] bg-white border border-vet-border p-6 sm:p-8">
         <SectionHeading title="About You" />
 
         <textarea
@@ -494,7 +503,7 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
           required
           rows={5}
           placeholder="Tell pet owners about your experience and approach to veterinary care..."
-          className="w-full rounded-2xl border border-[#E5DDD8] bg-[#FCFAF9] px-4 py-3 text-sm text-[#302925] outline-none focus:border-[#B98A68] resize-none"
+          className="w-full rounded-2xl border border-[#E5DDD8] bg-[#FCFAF9] px-4 py-3 text-sm text-vet-text-primary outline-none focus:border-[#B98A68] resize-none"
         />
       </section>
 
@@ -512,14 +521,14 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
             justify-center
             gap-2
             rounded-full
-            bg-[#8B572F]
+            bg-vet-primary-dark
             px-7
             py-3.5
             text-sm
             font-semibold
             text-white
             shadow-[0_8px_20px_rgba(139,87,47,0.18)]
-            hover:bg-[#744622]
+            hover:bg-vet-primary-dark-hover
             disabled:opacity-60
             disabled:cursor-not-allowed
             transition
@@ -545,7 +554,7 @@ const DoctorProfileForm = ({ mode = "complete", onSuccess }) => {
 const SectionHeading = ({ title }) => {
   return (
     <div className="mb-5">
-      <h2 className="text-lg font-semibold text-[#302925]">{title}</h2>
+      <h2 className="text-lg font-semibold text-vet-text-primary">{title}</h2>
     </div>
   );
 };
@@ -594,7 +603,7 @@ const InputField = ({
           ${
             disabled
               ? "bg-[#F3EEEA] text-[#8B7E77] cursor-not-allowed"
-              : "bg-[#FCFAF9] text-[#302925] focus:border-[#B98A68]"
+              : "bg-[#FCFAF9] text-vet-text-primary focus:border-[#B98A68]"
           }
         `}
       />

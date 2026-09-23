@@ -57,7 +57,7 @@ const DoctorAppointments = () => {
         return "bg-[#FBECEC] text-[#A85A5A]";
 
       default:
-        return "bg-[#F5F2F0] text-[#786D67]";
+        return "bg-[#F5F2F0] text-vet-text-secondary";
     }
   };
 
@@ -68,18 +68,18 @@ const DoctorAppointments = () => {
         {/* Page Header */}
 
         <section>
-          <p className="text-sm text-[#786D67] mb-2">
+          <p className="text-sm text-vet-text-secondary mb-2">
             Manage your schedule
           </p>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
             <div>
-              <h1 className="text-3xl sm:text-4xl font-semibold text-[#302925]">
+              <h1 className="text-3xl sm:text-4xl font-semibold text-vet-text-primary">
                 Appointments
               </h1>
 
-              <p className="mt-2 text-sm sm:text-base text-[#786D67]">
+              <p className="mt-2 text-sm sm:text-base text-vet-text-secondary">
                 View and manage your upcoming and previous appointments.
               </p>
             </div>
@@ -89,13 +89,13 @@ const DoctorAppointments = () => {
               className="
                 w-fit
                 rounded-full
-                bg-[#8B572F]
+                bg-vet-primary-dark
                 px-5
                 py-3
                 text-sm
                 font-medium
                 text-white
-                hover:bg-[#744622]
+                hover:bg-vet-primary-dark-hover
                 transition
               "
             >
@@ -118,15 +118,15 @@ const DoctorAppointments = () => {
               shadow-[0_8px_30px_rgba(70,45,30,0.05)]
             "
           >
-            <p className="text-sm text-[#786D67]">
+            <p className="text-sm text-vet-text-secondary">
               Today's Appointments
             </p>
 
-            <p className="mt-2 text-3xl font-semibold text-[#302925]">
+            <p className="mt-2 text-3xl font-semibold text-vet-text-primary">
               3
             </p>
 
-            <p className="mt-1 text-xs text-[#786D67]">
+            <p className="mt-1 text-xs text-vet-text-secondary">
               2 appointments remaining
             </p>
           </div>
@@ -140,15 +140,15 @@ const DoctorAppointments = () => {
               shadow-[0_8px_30px_rgba(70,45,30,0.05)]
             "
           >
-            <p className="text-sm text-[#786D67]">
+            <p className="text-sm text-vet-text-secondary">
               Upcoming
             </p>
 
-            <p className="mt-2 text-3xl font-semibold text-[#302925]">
+            <p className="mt-2 text-3xl font-semibold text-vet-text-primary">
               5
             </p>
 
-            <p className="mt-1 text-xs text-[#786D67]">
+            <p className="mt-1 text-xs text-vet-text-secondary">
               Scheduled appointments
             </p>
           </div>
@@ -162,15 +162,15 @@ const DoctorAppointments = () => {
               shadow-[0_8px_30px_rgba(70,45,30,0.05)]
             "
           >
-            <p className="text-sm text-[#786D67]">
+            <p className="text-sm text-vet-text-secondary">
               Consultation Type
             </p>
 
-            <p className="mt-2 text-3xl font-semibold text-[#302925]">
+            <p className="mt-2 text-3xl font-semibold text-vet-text-primary">
               Online
             </p>
 
-            <p className="mt-1 text-xs text-[#786D67]">
+            <p className="mt-1 text-xs text-vet-text-secondary">
               General Consultation available
             </p>
           </div>
@@ -195,11 +195,11 @@ const DoctorAppointments = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
 
             <div>
-              <h2 className="text-xl font-semibold text-[#302925]">
+              <h2 className="text-xl font-semibold text-vet-text-primary">
                 Upcoming Appointments
               </h2>
 
-              <p className="mt-1 text-sm text-[#786D67]">
+              <p className="mt-1 text-sm text-vet-text-secondary">
                 Your scheduled consultations
               </p>
             </div>
@@ -287,11 +287,11 @@ const DoctorAppointments = () => {
 
                     <div className="min-w-0">
 
-                      <h3 className="text-base font-semibold text-[#302925]">
+                      <h3 className="text-base font-semibold text-vet-text-primary">
                         {appointment.patient}
                       </h3>
 
-                      <p className="mt-1 text-sm text-[#786D67]">
+                      <p className="mt-1 text-sm text-vet-text-secondary">
                         {appointment.breed}
                       </p>
 
@@ -299,10 +299,10 @@ const DoctorAppointments = () => {
 
                         <UserRound
                           size={13}
-                          className="text-[#786D67]"
+                          className="text-vet-text-secondary"
                         />
 
-                        <span className="text-xs text-[#786D67]">
+                        <span className="text-xs text-vet-text-secondary">
                           {appointment.owner}
                         </span>
 
@@ -336,7 +336,7 @@ const DoctorAppointments = () => {
 
                     <div>
 
-                      <p className="text-sm font-medium text-[#302925]">
+                      <p className="text-sm font-medium text-vet-text-primary">
                         {appointment.date}
                       </p>
 
@@ -344,10 +344,10 @@ const DoctorAppointments = () => {
 
                         <Clock3
                           size={13}
-                          className="text-[#786D67]"
+                          className="text-vet-text-secondary"
                         />
 
-                        <span className="text-xs text-[#786D67]">
+                        <span className="text-xs text-vet-text-secondary">
                           {appointment.time}
                         </span>
 

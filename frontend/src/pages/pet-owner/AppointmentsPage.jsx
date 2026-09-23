@@ -222,7 +222,7 @@ const AppointmentsPage = () => {
               Appointments
             </h1>
 
-            <p className="mt-2 text-sm sm:text-base text-[#786D67]">
+            <p className="mt-2 text-sm sm:text-base text-vet-text-secondary">
               Manage your pet's health schedule and upcoming consultations.
             </p>
           </div>
@@ -232,8 +232,8 @@ const AppointmentsPage = () => {
           <button
             type="button"
             onClick={handleBookAppointment}
-            className="inline-flex items-center justify-center gap-2 self-start lg:self-auto rounded-full bg-[#8B572F] px-5 sm:px-6
-                                    py-3 text-sm font-semibold text-white cursor-pointer shadow-[0_8px_20px_rgba(139,87,47,0.18)] hover:bg-[#744622] hover:-translate-y-0.5
+            className="inline-flex items-center justify-center gap-2 self-start lg:self-auto rounded-full bg-vet-primary-dark px-5 sm:px-6
+                                    py-3 text-sm font-semibold text-white cursor-pointer shadow-[0_8px_20px_rgba(139,87,47,0.18)] hover:bg-vet-primary-dark-hover hover:-translate-y-0.5
                                     hover:shadow-lg active:translate-y-0 transition-all"
           >
             <Plus size={18} />
@@ -248,7 +248,7 @@ const AppointmentsPage = () => {
             {/* UPCOMING LIST */}
             <div className="space-y-4">
               {appointmentsLoading ? (
-                <div className="py-10 text-center text-sm text-[#786D67]">
+                <div className="py-10 text-center text-sm text-vet-text-secondary">
                   Loading appointments...
                 </div>
               ) : upcomingAppointments.length > 0 ? (
@@ -307,11 +307,11 @@ const AppointmentsPage = () => {
         <section className="mt-10">
           <SectionTitle title="Past Consultations" muted />
           {pastAppointments.length > 0 ? (
-            <div className="mt-4 overflow-x-auto rounded-[28px] bg-white border border-[#EEE8E4] shadow-[0_8px_30px_rgba(70,45,30,0.04)]">
+            <div className="mt-4 overflow-x-auto rounded-[28px] bg-white border border-vet-border shadow-[0_8px_30px_rgba(70,45,30,0.04)]">
               <table className="w-full min-w-[760px] text-left">
                 {/* TABLE HEADER */}
                 <thead>
-                  <tr className="border-b border-[#EEE8E4] text-xs font-semibold text-[#786D67]">
+                  <tr className="border-b border-vet-border text-xs font-semibold text-vet-text-secondary">
                     <th className="px-6 py-4">Date</th>
                     <th className="px-6 py-4">Pet</th>
                     <th className="px-6 py-4">Veterinarian</th>
@@ -344,7 +344,7 @@ const AppointmentsPage = () => {
                               <img src={pet?.image} alt={appointment.pet} className="w-full h-full object-cover"/>
                             </div>
 
-                            <span className="font-medium text-[#302925]">
+                            <span className="font-medium text-vet-text-primary">
                               {appointment.pet_name}
                             </span>
                           </div>
@@ -446,7 +446,7 @@ const AppointmentsPage = () => {
                 rounded-[28px]
                 bg-white
                 border
-                border-[#EEE8E4]
+                border-vet-border
                 p-10
                 text-center
               "
@@ -454,7 +454,7 @@ const AppointmentsPage = () => {
               <p
                 className="
                   text-sm
-                  text-[#786D67]
+                  text-vet-text-secondary
                 "
               >
                 No past consultations yet.
@@ -498,7 +498,7 @@ const SectionTitle = ({ title, muted = false }) => {
 
           font-semibold
 
-          text-[#302925]
+          text-vet-text-primary
         "
       >
         {title}
@@ -562,7 +562,7 @@ const CalendarCard = ({
         bg-white
 
         border
-        border-[#EEE8E4]
+        border-vet-border
 
         p-5
         sm:p-6
@@ -587,7 +587,7 @@ const CalendarCard = ({
           className="
             text-lg
             font-semibold
-            text-[#302925]
+            text-vet-text-primary
           "
         >
           {monthName} {year}
@@ -752,11 +752,11 @@ const CalendarCard = ({
                     ${
                       isAppointmentDay
                         ? `
-                          bg-[#8B572F]
+                          bg-vet-primary-dark
                           text-white
                           font-semibold
 
-                          hover:bg-[#744622]
+                          hover:bg-vet-primary-dark-hover
                         `
                         : isToday
                           ? `
@@ -767,12 +767,12 @@ const CalendarCard = ({
 
                           font-semibold
 
-                          hover:bg-[#F7F1ED]
+                          hover:bg-vet-background-soft
                         `
                           : `
                           text-[#4C423C]
 
-                          hover:bg-[#F7F1ED]
+                          hover:bg-vet-background-soft
                         `
                     }
                   `}
@@ -795,7 +795,7 @@ const CalendarCard = ({
           pt-5
 
           border-t
-          border-[#EEE8E4]
+          border-vet-border
 
           space-y-3
         "
@@ -828,14 +828,14 @@ const Legend = ({ label, type }) => {
 
           rounded-full
 
-          ${type === "dark" ? "bg-[#8B572F]" : "border border-[#EBB183]"}
+          ${type === "dark" ? "bg-vet-primary-dark" : "border border-[#EBB183]"}
         `}
       />
 
       <span
         className="
           text-xs
-          text-[#786D67]
+          text-vet-text-secondary
         "
       >
         {label}
@@ -866,10 +866,10 @@ const getDisplayStatus = (status) => {
 
 const StatusBadge = ({ status }) => {
   const styles = {
-    Completed: "bg-[#EDF5EC] text-[#56704E]",
-    Cancelled: "bg-[#FBEAEA] text-[#A15A5A]",
-    Rejected: "bg-[#FBEAEA] text-[#A15A5A]",
-    Upcoming: "bg-[#F6EADF] text-[#8B572F]",
+    Completed: "bg-vet-success-bg text-vet-success-text",
+    Cancelled: "bg-vet-error-bg text-vet-error-text",
+    Rejected: "bg-vet-error-bg text-vet-error-text",
+    Upcoming: "bg-vet-warning-bg text-vet-warning-text",
   };
 
   return (
@@ -906,7 +906,7 @@ const EmptyState = () => {
         bg-white
 
         border
-        border-[#EEE8E4]
+        border-vet-border
 
         px-6
         py-12
@@ -923,7 +923,7 @@ const EmptyState = () => {
 
           rounded-full
 
-          bg-[#F7F1ED]
+          bg-vet-background-soft
 
           flex
           items-center
@@ -940,7 +940,7 @@ const EmptyState = () => {
           text-lg
           font-semibold
 
-          text-[#302925]
+          text-vet-text-primary
         "
       >
         No upcoming consultations
@@ -952,7 +952,7 @@ const EmptyState = () => {
 
           text-sm
 
-          text-[#786D67]
+          text-vet-text-secondary
         "
       >
         You don't have any upcoming veterinary consultations.

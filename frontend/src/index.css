@@ -1,26 +1,106 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #EBB183;
-  --color-secondary: #605e5b;
-  --color-dark: #1A1A1A;
-  --color-light: #FAF3EF;
-  --color-gray: #EAE7E7;
+  /* ========================================
+     BRAND
+  ======================================== */
 
-  --color-text-primary: #1A1A1A;
-  --color-text-secondary: #666666;
-  --color-text-light: #ffffff;
-  --color-text-highlight: #EBB183;
-  --color-text-mute: #9C8B84;
-  --color-text-dark: #1A1A1A;
+  --color-vet-primary: #EBB183;
+  --color-vet-primary-hover: #E3A674;
+  --color-vet-primary-dark: #8B572F;
+  --color-vet-primary-dark-hover: #744622;
 
-  --color-btn-primary: #81542E;
-  --color-btn-secondary: #C9C6C1; 
-  --color-btn-dark: #1A1A1A; 
 
+  /* ========================================
+     BACKGROUNDS
+  ======================================== */
+
+  --color-vet-background: #F9F5F0;
+  --color-vet-background-soft: #F7F1ED;
+  --color-vet-card: #FFFFFF;
+  --color-vet-white: #FFFFFF;
+
+  --color-vet-input: #FCFAF9;
+
+  /* Sidebar / dashboard areas */
+  --color-vet-sidebar: #F5F2F0;
+  --color-vet-sidebar-hover: #F7F1ED;
+
+
+  /* ========================================
+     TEXT
+  ======================================== */
+
+  --color-vet-text-primary: #302925;
+  --color-vet-text-secondary: #786D67;
+  --color-vet-text-muted: #8B7E77;
+  --color-vet-text-dark: #62412D;
+  --color-vet-text-light: #FFFFFF;
+
+
+  /* ========================================
+     BORDERS
+  ======================================== */
+
+  --color-vet-border: #EEE8E4;
+  --color-vet-border-input: #E5DDD8;
+  --color-vet-border-sidebar: #E8E1DD;
+
+
+  /* ========================================
+     SUCCESS
+  ======================================== */
+
+  --color-vet-success-bg: #EDF5EC;
+  --color-vet-success-text: #56704E;
+  --color-vet-success-border: #D8E8D5;
+
+
+  /* ========================================
+     WARNING
+  ======================================== */
+
+  --color-vet-warning-bg: #F6EADF;
+  --color-vet-warning-text: #8B572F;
+  --color-vet-warning-border: #EED5C0;
+
+
+  /* ========================================
+     ERROR
+  ======================================== */
+
+  --color-vet-error-bg: #FBEAEA;
+  --color-vet-error-text: #A15A5A;
+  --color-vet-error-border: #F0D0D0;
+
+
+  /* ========================================
+     ICON / DECORATIVE
+  ======================================== */
+
+  --color-vet-icon-bg: #F6EADF;
+  --color-vet-icon-soft: #F7F1ED;
+  --color-vet-icon-muted: #F3EEEA;
+
+
+  /* ========================================
+     HOVER
+  ======================================== */
+
+  --color-vet-hover: #F7F1ED;
+  --color-vet-hover-dark: #EDE5DF;
+
+
+  /* ========================================
+     DISABLED
+  ======================================== */
+
+  --color-vet-disabled-bg: #F3EEEA;
+  --color-vet-disabled-text: #A79C96;
+  --color-vet-disabled-border: #E5DDD8;
 }
 
 
 body {
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }

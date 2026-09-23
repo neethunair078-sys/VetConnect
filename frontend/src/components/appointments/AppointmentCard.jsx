@@ -13,7 +13,7 @@ const AppointmentCard = ({
         w-full
         rounded-[28px]
         border
-        border-[#EEE8E4]
+        border-vet-border
         bg-white
         p-5
         sm:p-6
@@ -69,7 +69,7 @@ const AppointmentCard = ({
                 text-lg
                 sm:text-xl
                 font-semibold
-                text-[#302925]
+                text-vet-text-primary
               "
             >
               {appointment.pet}
@@ -206,7 +206,7 @@ const AppointmentCard = ({
         className="
           mt-4
           text-sm
-          text-[#786D67]
+          text-vet-text-secondary
         "
       >
         {appointment.type}
@@ -238,14 +238,14 @@ const AppointmentCard = ({
               justify-center
               gap-2
               rounded-full
-              bg-[#8B572F]
+              bg-vet-primary-dark
               px-5
               py-3
               text-sm
               font-semibold
               text-white
               cursor-pointer
-              hover:bg-[#744622]
+              hover:bg-vet-primary-dark-hover
               hover:-translate-y-0.5
               hover:shadow-md
               active:translate-y-0

@@ -14,8 +14,8 @@ const AuthButton = ({
         w-full
         h-[40px]
         rounded-full
-        bg-primary
-        text-text-primary
+        bg-vet-primary
+        text-vet-text-primary
         text-[11px]
         font-semibold
         flex

@@ -40,7 +40,7 @@ const FormInput = ({
           px-4
 
           text-sm
-          text-[#302925]
+          text-vet-text-primary
 
           placeholder:text-[#A69A93]
 

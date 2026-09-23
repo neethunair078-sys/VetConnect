@@ -136,7 +136,7 @@ const PetsPage = () => {
 
             rounded-full
 
-            bg-[#8B572F]
+            bg-vet-primary-dark
 
             px-6
             py-3
@@ -150,7 +150,7 @@ const PetsPage = () => {
             transition-all
             duration-200
 
-            hover:bg-[#744622]
+            hover:bg-vet-primary-dark-hover
             hover:-translate-y-0.5
             hover:shadow-md
 

@@ -10,7 +10,7 @@ const AuthTabs = ({userType, setUserType, authMode, setAuthMode}) => {
           I am a...
         </p>
 
-        <div className="flex items-center w-[176px] h-[29px] p-1 rounded-full bg-gray">
+        <div className="flex items-center w-[176px] h-[29px] p-1 rounded-full bg-vet-background-soft">
 
           {/* Pet Owner */}
 
@@ -64,7 +64,7 @@ const AuthTabs = ({userType, setUserType, authMode, setAuthMode}) => {
 
       {/* ================= SIGN IN / REGISTER ================= */}
 
-      <div className="mt-5 flex items-center h-[58px] p-1 rounded-full bg-gray">
+      <div className="mt-5 flex items-center h-[58px] p-1 rounded-full bg-vet-background-soft">
 
         {/* Sign In */}
 

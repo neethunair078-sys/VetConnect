@@ -69,7 +69,7 @@ const PetCard = ({pet, onClick, variant = "dashboard"}) => {
             className="
               text-base
               font-semibold
-              text-[#302925]
+              text-vet-text-primary
             "
           >
             {pet.name}
@@ -80,7 +80,7 @@ const PetCard = ({pet, onClick, variant = "dashboard"}) => {
             className="
               mt-1
               text-sm
-              text-[#786D67]
+              text-vet-text-secondary
             "
           >
             {pet.breed}
@@ -90,7 +90,7 @@ const PetCard = ({pet, onClick, variant = "dashboard"}) => {
           <p
             className="
               text-xs
-              text-[#786D67]
+              text-vet-text-secondary
             "
           >
             {pet.age}

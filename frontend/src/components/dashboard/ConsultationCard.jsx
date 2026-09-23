@@ -39,7 +39,7 @@ const ConsultationCard = ({ consultation }) => {
           className="
             text-sm
             font-semibold
-            text-[#302925]
+            text-vet-text-primary
           "
         >
           {consultation.doctor}

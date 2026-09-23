@@ -104,7 +104,7 @@ const PetProfilePage = () => {
       <DashboardLayout>
         <div className="flex min-h-[400px] items-center justify-center">
           <div className="text-center">
-            <h2 className="text-xl font-semibold text-[#302925]">
+            <h2 className="text-xl font-semibold text-vet-text-primary">
               Pet not found
             </h2>
 
@@ -114,14 +114,14 @@ const PetProfilePage = () => {
               className="
                 mt-4
                 rounded-full
-                bg-[#8B572F]
+                bg-vet-primary-dark
                 px-5
                 py-2.5
                 text-sm
                 font-medium
                 text-white
                 cursor-pointer
-                hover:bg-[#744622]
+                hover:bg-vet-primary-dark-hover
                 transition
               "
             >
@@ -374,14 +374,14 @@ const PetProfilePage = () => {
                     justify-center
                     gap-2
                     rounded-full
-                    bg-[#8B572F]
+                    bg-vet-primary-dark
                     px-6
                     py-3
                     text-sm
                     font-semibold
                     text-white
                     cursor-pointer
-                    hover:bg-[#744622]
+                    hover:bg-vet-primary-dark-hover
                     hover:-translate-y-0.5
                     hover:shadow-md
                     active:translate-y-0
@@ -534,7 +534,7 @@ const InfoBadge = ({
           className="
             text-sm
             font-semibold
-            text-[#302925]
+            text-vet-text-primary
           "
         >
           {value}
@@ -574,7 +574,7 @@ const ProfileSection = ({
         className="
           text-xl
           font-semibold
-          text-[#302925]
+          text-vet-text-primary
         "
       >
         {title}
@@ -588,7 +588,7 @@ const ProfileSection = ({
           text-sm
           leading-6
 
-          text-[#786D67]
+          text-vet-text-secondary
         "
       >
         {description}

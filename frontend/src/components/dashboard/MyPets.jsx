@@ -67,14 +67,14 @@ const MyPets = ({
             className="
               mt-4
               rounded-full
-              bg-[#8B572F]
+              bg-vet-primary-dark
               px-5
               py-2.5
               text-sm
               font-medium
               text-white
               cursor-pointer
-              hover:bg-[#744622]
+              hover:bg-vet-primary-dark-hover
               transition
             "
           >

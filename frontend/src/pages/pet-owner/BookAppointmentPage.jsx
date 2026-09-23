@@ -373,7 +373,7 @@ const availableTimes = useMemo(() => {
             Book Appointment
           </h1>
 
-          <p className="mt-2 text-sm sm:text-base text-[#786D67]">
+          <p className="mt-2 text-sm sm:text-base text-vet-text-secondary">
             Schedule an online consultation for your furry family member.
           </p>
         </div>
@@ -554,11 +554,11 @@ const availableTimes = useMemo(() => {
                 {/* Doctors */}
 
                 {doctorsLoading ? (
-                  <div className="py-10 text-center text-sm text-[#786D67]">
+                  <div className="py-10 text-center text-sm text-vet-text-secondary">
                     Loading doctors...
                   </div>
                 ) : doctors.length === 0 ? (
-                  <div className="py-10 text-center text-sm text-[#786D67]">
+                  <div className="py-10 text-center text-sm text-vet-text-secondary">
                     No approved doctors are currently available.
                   </div>
                 ) : (
@@ -620,10 +620,10 @@ const availableTimes = useMemo(() => {
                       ${
                         selectedDoctor
                           ? `
-                            bg-[#8B572F]
+                            bg-vet-primary-dark
                             text-white
                             cursor-pointer
-                            hover:bg-[#744622]
+                            hover:bg-vet-primary-dark-hover
                           `
                           : `
                             bg-[#E7E3E0]
@@ -676,7 +676,7 @@ const availableTimes = useMemo(() => {
 
                     text-sm
 
-                    text-[#786D67]
+                    text-vet-text-secondary
                   "
                 >
                   Choose a date and available
@@ -699,7 +699,7 @@ const availableTimes = useMemo(() => {
                 >
 
                   {availabilityLoading ? (
-                    <div className="py-10 text-center text-sm text-[#786D67]">
+                    <div className="py-10 text-center text-sm text-vet-text-secondary">
                       Loading available dates...
                     </div>
                   ) : (
@@ -813,10 +813,10 @@ const availableTimes = useMemo(() => {
                         selectedDate &&
                         selectedTime
                           ? `
-                            bg-[#8B572F]
+                            bg-vet-primary-dark
                             text-white
                             cursor-pointer
-                            hover:bg-[#744622]
+                            hover:bg-vet-primary-dark-hover
                           `
                           : `
                             bg-[#E7E3E0]
@@ -874,7 +874,7 @@ const availableTimes = useMemo(() => {
                     bg-white
 
                     border
-                    border-[#EEE8E4]
+                    border-vet-border
 
                     p-5
                   "
@@ -913,7 +913,7 @@ const availableTimes = useMemo(() => {
                           text-lg
                           font-semibold
 
-                          text-[#302925]
+                          text-vet-text-primary
                         "
                       >
                         {
@@ -926,7 +926,7 @@ const availableTimes = useMemo(() => {
                         className="
                           text-sm
 
-                          text-[#786D67]
+                          text-vet-text-secondary
                         "
                       >
                         {
@@ -951,7 +951,7 @@ const availableTimes = useMemo(() => {
                       gap-5
 
                       border-t
-                      border-[#EEE8E4]
+                      border-vet-border
 
                       pt-5
                     "
@@ -1006,7 +1006,7 @@ const availableTimes = useMemo(() => {
                               text-sm
                               font-medium
 
-                              text-[#302925]
+                              text-vet-text-primary
                             "
                           >
                             {
@@ -1017,7 +1017,7 @@ const availableTimes = useMemo(() => {
                           <p
                             className="
                               text-xs
-                              text-[#786D67]
+                              text-vet-text-secondary
                             "
                           >
                             {
@@ -1053,7 +1053,7 @@ const availableTimes = useMemo(() => {
                           text-sm
                           font-medium
 
-                          text-[#302925]
+                          text-vet-text-primary
                         "
                       >
                         {formatDate(
@@ -1068,7 +1068,7 @@ const availableTimes = useMemo(() => {
 
                           text-xs
 
-                          text-[#786D67]
+                          text-vet-text-secondary
                         "
                       >
                         {selectedTime}
@@ -1123,7 +1123,7 @@ const availableTimes = useMemo(() => {
 
                       text-sm
 
-                      text-[#302925]
+                      text-vet-text-primary
 
                       outline-none
 
@@ -1212,7 +1212,7 @@ const availableTimes = useMemo(() => {
                     type="button"
                     onClick={handleConfirmBooking}
                     disabled={bookingLoading}
-                    className="flex-1 rounded-full bg-[#8B572F] py-3 text-sm font-semibold text-white cursor-pointer hover:bg-[#744622] hover:-translate-y-0.5 transition-all"
+                    className="flex-1 rounded-full bg-vet-primary-dark py-3 text-sm font-semibold text-white cursor-pointer hover:bg-vet-primary-dark-hover hover:-translate-y-0.5 transition-all"
                   >
                     {bookingLoading ? (
                       <span className="flex items-center justify-center gap-2">

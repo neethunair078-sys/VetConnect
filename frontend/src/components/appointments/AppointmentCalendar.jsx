@@ -45,7 +45,7 @@ const AppointmentCalendar = ({
         bg-white
 
         border
-        border-[#EEE8E4]
+        border-vet-border
 
         p-5
         sm:p-6
@@ -75,7 +75,7 @@ const AppointmentCalendar = ({
 
             cursor-pointer
 
-            hover:bg-[#F7F1ED]
+            hover:bg-vet-background-soft
 
             transition
           "
@@ -86,7 +86,7 @@ const AppointmentCalendar = ({
         <h3
           className="
             font-semibold
-            text-[#302925]
+            text-vet-text-primary
           "
         >
           {monthName} {year}
@@ -107,7 +107,7 @@ const AppointmentCalendar = ({
 
             cursor-pointer
 
-            hover:bg-[#F7F1ED]
+            hover:bg-vet-background-soft
 
             transition
           "
@@ -204,13 +204,13 @@ const AppointmentCalendar = ({
                   ${
                     selected
                       ? `
-                        bg-[#8B572F]
+                        bg-vet-primary-dark
                         text-white
                         font-semibold
                       `
                       : available
                         ? `
-                        text-[#302925]
+                        text-vet-text-primary
                         cursor-pointer
                         hover:bg-[#F6EADF]
                       `
@@ -241,7 +241,7 @@ const AppointmentCalendar = ({
 
           text-xs
 
-          text-[#786D67]
+          text-vet-text-secondary
         "
       >
         <div className="flex items-center gap-2">
@@ -252,7 +252,7 @@ const AppointmentCalendar = ({
 
               rounded-full
 
-              bg-[#8B572F]
+              bg-vet-primary-dark
             "
           />
           Selected

@@ -14,7 +14,7 @@ const TimeSlotPicker = ({
           bg-white
 
           border
-          border-[#EEE8E4]
+          border-vet-border
 
           p-6
 
@@ -25,7 +25,7 @@ const TimeSlotPicker = ({
         <p
           className="
             text-sm
-            text-[#786D67]
+            text-vet-text-secondary
           "
         >
           Select a date to view available
@@ -45,7 +45,7 @@ const TimeSlotPicker = ({
           text-sm
           font-semibold
 
-          text-[#302925]
+          text-vet-text-primary
         "
       >
         Available Times
@@ -63,7 +63,7 @@ const TimeSlotPicker = ({
             bg-white
 
             border
-            border-[#EEE8E4]
+            border-vet-border
 
             p-6
           "
@@ -72,7 +72,7 @@ const TimeSlotPicker = ({
           <p
             className="
               text-sm
-              text-[#786D67]
+              text-vet-text-secondary
             "
           >
             No consultation slots are
@@ -126,7 +126,7 @@ const TimeSlotPicker = ({
                   ${
                     selected
                       ? `
-                        bg-[#8B572F]
+                        bg-vet-primary-dark
                         border-[#8B572F]
                         text-white
                       `

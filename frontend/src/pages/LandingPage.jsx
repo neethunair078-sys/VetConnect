@@ -13,8 +13,8 @@ const LandingPage = () => {
                     {/* LEFT CONTENT */}
                     <div className="max-w-xl">
 
-                        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1] text-text-primary">
-                            Your Pet Care <br /> <span className="text-text-highlight">Center</span>
+                        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1] text-vet-text-primary">
+                            Your Pet Care <br /> <span className="text-vet-primary">Center</span>
                         </h1>
 
                         <p className="mt-6 max-w-lg text-base sm:text-lg leading-7 sm:leading-8 text-text-secondary">
@@ -29,7 +29,7 @@ const LandingPage = () => {
 
                         <button
                         className="
-                            bg-primary
+                            bg-vet-primary
                             text-white
                             px-7
                             py-3
@@ -46,7 +46,7 @@ const LandingPage = () => {
                         className="
                             px-5
                             py-3
-                            text-text-primary
+                            text-vet-text-primary
                             font-semibold
                             hover:text-primary
                             transition

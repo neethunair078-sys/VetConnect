@@ -17,7 +17,7 @@ const AuthLayout = ({ children }) => {
 
                     {/* Peach overlay */}
 
-                    <div className="absolute inset-0 bg-primary/80" />
+                    <div className="absolute inset-0 bg-vet-primary/80" />
 
                     {/* Content */}
 

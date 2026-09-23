@@ -67,7 +67,7 @@ const FormSelect = ({
 
             ${
               value
-                ? "text-[#302925]"
+                ? "text-vet-text-primary"
                 : "text-[#A69A93]"
             }
           `}

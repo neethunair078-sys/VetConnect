@@ -19,7 +19,7 @@ const SectionHeader = ({
           text-xl
           sm:text-2xl
           font-semibold
-          text-text-primary
+          text-vet-text-primary
         "
       >
         {title}

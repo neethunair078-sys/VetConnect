@@ -97,15 +97,15 @@ const DoctorDashboard = () => {
         {/* -------------------------------------------------- */}
 
         <section>
-          <p className="text-sm text-[#786D67] mb-2">
+          <p className="text-sm text-vet-text-secondary mb-2">
             Tuesday, September 15, 2026
           </p>
 
-          <h1 className="text-3xl sm:text-4xl font-semibold text-[#302925]">
+          <h1 className="text-3xl sm:text-4xl font-semibold text-vet-text-primary">
             Good afternoon, Doctor
           </h1>
 
-          <p className="mt-2 text-sm sm:text-base text-[#786D67]">
+          <p className="mt-2 text-sm sm:text-base text-vet-text-secondary">
             Here is an overview of your appointments and patients for today.
           </p>
         </section>
@@ -134,15 +134,15 @@ const DoctorDashboard = () => {
                 <div className="flex items-start justify-between">
 
                   <div>
-                    <p className="text-sm text-[#786D67]">
+                    <p className="text-sm text-vet-text-secondary">
                       {stat.label}
                     </p>
 
-                    <p className="mt-2 text-3xl font-semibold text-[#302925]">
+                    <p className="mt-2 text-3xl font-semibold text-vet-text-primary">
                       {stat.value}
                     </p>
 
-                    <p className="mt-1 text-xs text-[#786D67]">
+                    <p className="mt-1 text-xs text-vet-text-secondary">
                       {stat.description}
                     </p>
                   </div>
@@ -194,11 +194,11 @@ const DoctorDashboard = () => {
             <div className="flex items-center justify-between mb-5">
 
               <div>
-                <h2 className="text-xl font-semibold text-[#302925]">
+                <h2 className="text-xl font-semibold text-vet-text-primary">
                   Today's Schedule
                 </h2>
 
-                <p className="mt-1 text-sm text-[#786D67]">
+                <p className="mt-1 text-sm text-vet-text-secondary">
                   Your upcoming appointments
                 </p>
               </div>
@@ -266,11 +266,11 @@ const DoctorDashboard = () => {
 
                     <div>
 
-                      <p className="text-sm font-semibold text-[#302925]">
+                      <p className="text-sm font-semibold text-vet-text-primary">
                         {appointment.patient}
                       </p>
 
-                      <p className="text-xs text-[#786D67]">
+                      <p className="text-xs text-vet-text-secondary">
                         Owner: {appointment.owner}
                       </p>
 
@@ -298,7 +298,7 @@ const DoctorDashboard = () => {
 
                     <div className="hidden md:block">
 
-                      <p className="text-xs text-[#786D67]">
+                      <p className="text-xs text-vet-text-secondary">
                         {appointment.type}
                       </p>
 
@@ -368,11 +368,11 @@ const DoctorDashboard = () => {
 
             <div className="mb-5">
 
-              <h2 className="text-xl font-semibold text-[#302925]">
+              <h2 className="text-xl font-semibold text-vet-text-primary">
                 Tasks
               </h2>
 
-              <p className="mt-1 text-sm text-[#786D67]">
+              <p className="mt-1 text-sm text-vet-text-secondary">
                 Items that need your attention
               </p>
 
@@ -422,14 +422,14 @@ const DoctorDashboard = () => {
                         ${
                           task.completed
                             ? "text-[#A49A94] line-through"
-                            : "text-[#302925]"
+                            : "text-vet-text-primary"
                         }
                       `}
                     >
                       {task.title}
                     </p>
 
-                    <p className="mt-1 text-xs text-[#786D67]">
+                    <p className="mt-1 text-xs text-vet-text-secondary">
                       Patient: {task.patient}
                     </p>
 
@@ -487,11 +487,11 @@ const DoctorDashboard = () => {
             <div className="flex items-center justify-between mb-5">
 
               <div>
-                <h2 className="text-xl font-semibold text-[#302925]">
+                <h2 className="text-xl font-semibold text-vet-text-primary">
                   Current Patient
                 </h2>
 
-                <p className="mt-1 text-sm text-[#786D67]">
+                <p className="mt-1 text-sm text-vet-text-secondary">
                   Patient from your upcoming consultation
                 </p>
               </div>
@@ -535,15 +535,15 @@ const DoctorDashboard = () => {
 
                 <div>
 
-                  <h3 className="text-base font-semibold text-[#302925]">
+                  <h3 className="text-base font-semibold text-vet-text-primary">
                     Bruno
                   </h3>
 
-                  <p className="text-sm text-[#786D67]">
+                  <p className="text-sm text-vet-text-secondary">
                     Golden Retriever
                   </p>
 
-                  <p className="mt-1 text-xs text-[#786D67]">
+                  <p className="mt-1 text-xs text-vet-text-secondary">
                     4 years · Male · 28 kg
                   </p>
 
@@ -560,13 +560,13 @@ const DoctorDashboard = () => {
                   items-center
                   gap-2
                   rounded-full
-                  bg-[#8B572F]
+                  bg-vet-primary-dark
                   px-4
                   py-2.5
                   text-xs
                   font-medium
                   text-white
-                  hover:bg-[#744622]
+                  hover:bg-vet-primary-dark-hover
                   transition
                 "
               >
@@ -593,11 +593,11 @@ const DoctorDashboard = () => {
 
             <div className="mb-5">
 
-              <h2 className="text-xl font-semibold text-[#302925]">
+              <h2 className="text-xl font-semibold text-vet-text-primary">
                 Quick Actions
               </h2>
 
-              <p className="mt-1 text-sm text-[#786D67]">
+              <p className="mt-1 text-sm text-vet-text-secondary">
                 Frequently used doctor tools
               </p>
 
@@ -623,11 +623,11 @@ const DoctorDashboard = () => {
                   className="text-[#8B572F]"
                 />
 
-                <p className="mt-3 text-sm font-semibold text-[#302925]">
+                <p className="mt-3 text-sm font-semibold text-vet-text-primary">
                   Manage Appointments
                 </p>
 
-                <p className="mt-1 text-xs text-[#786D67]">
+                <p className="mt-1 text-xs text-vet-text-secondary">
                   View and manage your schedule
                 </p>
               </button>
@@ -650,11 +650,11 @@ const DoctorDashboard = () => {
                   className="text-[#8B572F]"
                 />
 
-                <p className="mt-3 text-sm font-semibold text-[#302925]">
+                <p className="mt-3 text-sm font-semibold text-vet-text-primary">
                   View Patients
                 </p>
 
-                <p className="mt-1 text-xs text-[#786D67]">
+                <p className="mt-1 text-xs text-vet-text-secondary">
                   Access your patient list
                 </p>
               </button>
@@ -677,11 +677,11 @@ const DoctorDashboard = () => {
                   className="text-[#8B572F]"
                 />
 
-                <p className="mt-3 text-sm font-semibold text-[#302925]">
+                <p className="mt-3 text-sm font-semibold text-vet-text-primary">
                   Set Availability
                 </p>
 
-                <p className="mt-1 text-xs text-[#786D67]">
+                <p className="mt-1 text-xs text-vet-text-secondary">
                   Manage your consultation hours
                 </p>
               </button>
@@ -704,11 +704,11 @@ const DoctorDashboard = () => {
                   className="text-[#8B572F]"
                 />
 
-                <p className="mt-3 text-sm font-semibold text-[#302925]">
+                <p className="mt-3 text-sm font-semibold text-vet-text-primary">
                   Health Records
                 </p>
 
-                <p className="mt-1 text-xs text-[#786D67]">
+                <p className="mt-1 text-xs text-vet-text-secondary">
                   Review patient records
                 </p>
               </button>

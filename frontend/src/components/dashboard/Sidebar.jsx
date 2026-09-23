@@ -250,13 +250,7 @@ const Sidebar = ({
             "
           >
             <img
-              src={
-                user?.profileImage
-                  ? user.profileImage.startsWith("http")
-                    ? user.profileImage
-                    : `${import.meta.env.VITE_MEDIA_BASE_URL}${user.profileImage}`
-                  : "/images/profile/user.jpg"
-              }
+              src={user?.profileImage || "/images/profile/user.jpg"}
               alt={user?.fullName || "User Profile"}
               className="w-full h-full object-cover"
             />

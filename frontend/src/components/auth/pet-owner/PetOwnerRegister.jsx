@@ -224,7 +224,7 @@ const PetOwnerRegister = ({onRegistrationSuccess}) => {
           className="
             text-[27px]
             font-semibold
-            text-text-primary
+            text-vet-text-primary
           "
         >
           Create Account

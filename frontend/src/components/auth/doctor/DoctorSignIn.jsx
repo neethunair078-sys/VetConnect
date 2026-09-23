@@ -185,7 +185,7 @@ const DoctorSignIn = () => {
           className="
             text-[27px]
             font-semibold
-            text-text-primary
+            text-vet-text-primary
           "
         >
           Welcome, Doctor

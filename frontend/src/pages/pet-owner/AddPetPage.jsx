@@ -669,7 +669,7 @@ const AddPetPage = () => {
 
                 rounded-full
 
-                bg-[#8B572F]
+                bg-vet-primary-dark
 
                 px-5
                 sm:px-6
@@ -689,7 +689,7 @@ const AddPetPage = () => {
                 transition-all
                 duration-200
 
-                hover:bg-[#744622]
+                hover:bg-vet-primary-dark-hover
                 hover:-translate-y-0.5
                 hover:shadow-md
 
@@ -765,7 +765,7 @@ const Step = ({
           font-semibold
 
           ${active || completed
-            ? "bg-[#8B572F] text-white"
+            ? "bg-vet-primary-dark text-white"
             : "bg-[#E7E2DE] text-[#776B64]"
           }
         `}
@@ -823,7 +823,7 @@ const StepLine = ({
         h-px
 
         ${active
-          ? "bg-[#8B572F]"
+          ? "bg-vet-primary-dark"
           : "bg-[#DED8D3]"
         }
       `}

@@ -33,7 +33,7 @@ const Navbar = () => {
                                 className={`text-[13px] font-semibold transition-colors duration-200
                                 ${
                                     index === 0
-                                    ? "text-text-primary"
+                                    ? "text-vet-text-primary"
                                     : "text-[#4B4541] hover:text-primary"
                                 }
                                 `}
@@ -48,7 +48,7 @@ const Navbar = () => {
                     {/* Sign Up */}
           <button
             className="
-              bg-primary
+              bg-vet-primary
               text-white
               text-[13px]
               font-semibold

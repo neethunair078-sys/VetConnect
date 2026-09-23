@@ -37,7 +37,7 @@ const BookingSummary = ({
         bg-white
 
         border
-        border-[#EEE8E4]
+        border-vet-border
 
         p-6
 
@@ -53,7 +53,7 @@ const BookingSummary = ({
           text-xl
           font-semibold
 
-          text-[#302925]
+          text-vet-text-primary
         "
       >
         Summary
@@ -65,7 +65,7 @@ const BookingSummary = ({
           mt-5
 
           border-t
-          border-[#EEE8E4]
+          border-vet-border
 
           pt-5
         "
@@ -87,7 +87,7 @@ const BookingSummary = ({
             text-sm
             font-medium
 
-            text-[#302925]
+            text-vet-text-primary
           "
         >
           Online Veterinary Consultation
@@ -103,7 +103,7 @@ const BookingSummary = ({
           mt-5
 
           border-t
-          border-[#EEE8E4]
+          border-vet-border
 
           pt-5
         "
@@ -164,7 +164,7 @@ const BookingSummary = ({
                   text-sm
                   font-medium
 
-                  text-[#302925]
+                  text-vet-text-primary
                 "
               >
                 {pet.name}
@@ -174,7 +174,7 @@ const BookingSummary = ({
                 className="
                   text-xs
 
-                  text-[#786D67]
+                  text-vet-text-secondary
                 "
               >
                 {pet.breed}
@@ -209,7 +209,7 @@ const BookingSummary = ({
           mt-5
 
           border-t
-          border-[#EEE8E4]
+          border-vet-border
 
           pt-5
         "
@@ -232,7 +232,7 @@ const BookingSummary = ({
             text-sm
             font-medium
 
-            text-[#302925]
+            text-vet-text-primary
           "
         >
           {doctor
@@ -250,7 +250,7 @@ const BookingSummary = ({
           mt-5
 
           border-t
-          border-[#EEE8E4]
+          border-vet-border
 
           pt-5
         "
@@ -276,7 +276,7 @@ const BookingSummary = ({
                 text-sm
                 font-medium
 
-                text-[#302925]
+                text-vet-text-primary
               "
             >
               {formattedDate}
@@ -288,7 +288,7 @@ const BookingSummary = ({
 
                 text-sm
 
-                text-[#786D67]
+                text-vet-text-secondary
               "
             >
               {selectedTime}
@@ -323,7 +323,7 @@ const BookingSummary = ({
           mt-5
 
           border-t
-          border-[#EEE8E4]
+          border-vet-border
 
           pt-5
 
@@ -382,12 +382,12 @@ const BookingSummary = ({
           ${
             canContinue
               ? `
-                bg-[#8B572F]
+                bg-vet-primary-dark
                 text-white
 
                 cursor-pointer
 
-                hover:bg-[#744622]
+                hover:bg-vet-primary-dark-hover
                 hover:-translate-y-0.5
               `
               : `

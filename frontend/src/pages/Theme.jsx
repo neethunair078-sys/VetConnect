@@ -7,7 +7,7 @@ const Theme = () => {
       {/* Header */}
       <div className="border-b border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-6 py-6">
-          <h1 className="text-3xl font-bold text-text-primary">
+          <h1 className="text-3xl font-bold text-vet-text-primary">
             VetConnect Design System
           </h1>
 
@@ -23,7 +23,7 @@ const Theme = () => {
         {/* ================= COLORS ================= */}
 
         <section>
-          <h2 className="text-2xl font-bold text-text-primary mb-6">
+          <h2 className="text-2xl font-bold text-vet-text-primary mb-6">
             Colors
           </h2>
 
@@ -32,7 +32,7 @@ const Theme = () => {
             <ColorCard
               name="Primary"
               color="#EBB183"
-              className="bg-primary"
+              className="bg-vet-primary"
             />
 
             <ColorCard
@@ -60,7 +60,7 @@ const Theme = () => {
         {/* ================= TYPOGRAPHY ================= */}
 
         <section>
-          <h2 className="text-2xl font-bold text-text-primary mb-6">
+          <h2 className="text-2xl font-bold text-vet-text-primary mb-6">
             Typography
           </h2>
 
@@ -71,7 +71,7 @@ const Theme = () => {
                 Heading 1
               </p>
 
-              <h1 className="text-5xl font-bold text-text-primary">
+              <h1 className="text-5xl font-bold text-vet-text-primary">
                 Your Pet Care Center
               </h1>
             </div>
@@ -82,7 +82,7 @@ const Theme = () => {
                 Heading 2
               </p>
 
-              <h2 className="text-3xl font-bold text-text-primary">
+              <h2 className="text-3xl font-bold text-vet-text-primary">
                 Quality Care For Your Pets
               </h2>
             </div>
@@ -117,7 +117,7 @@ const Theme = () => {
         {/* ================= BUTTONS ================= */}
 
         <section>
-          <h2 className="text-2xl font-bold text-text-primary mb-6">
+          <h2 className="text-2xl font-bold text-vet-text-primary mb-6">
             Buttons
           </h2>
 
@@ -146,14 +146,14 @@ const Theme = () => {
         {/* ================= INPUTS ================= */}
 
         <section>
-          <h2 className="text-2xl font-bold text-text-primary mb-6">
+          <h2 className="text-2xl font-bold text-vet-text-primary mb-6">
             Form Elements
           </h2>
 
           <div className="bg-white rounded-2xl p-8 max-w-xl space-y-5">
 
             <div>
-              <label className="block text-sm font-medium text-text-primary mb-2">
+              <label className="block text-sm font-medium text-vet-text-primary mb-2">
                 Email
               </label>
 
@@ -177,7 +177,7 @@ const Theme = () => {
 
 
             <div>
-              <label className="block text-sm font-medium text-text-primary mb-2">
+              <label className="block text-sm font-medium text-vet-text-primary mb-2">
                 Password
               </label>
 
@@ -206,7 +206,7 @@ const Theme = () => {
         {/* ================= CARDS ================= */}
 
         <section>
-          <h2 className="text-2xl font-bold text-text-primary mb-6">
+          <h2 className="text-2xl font-bold text-vet-text-primary mb-6">
             Cards
           </h2>
 
@@ -217,7 +217,7 @@ const Theme = () => {
                 🩺
               </div>
 
-              <h3 className="mt-5 text-xl font-bold text-text-primary">
+              <h3 className="mt-5 text-xl font-bold text-vet-text-primary">
                 24/7 Vet Access
               </h3>
 
@@ -233,7 +233,7 @@ const Theme = () => {
                 🐾
               </div>
 
-              <h3 className="mt-5 text-xl font-bold text-text-primary">
+              <h3 className="mt-5 text-xl font-bold text-vet-text-primary">
                 Pet Care
               </h3>
 
@@ -248,7 +248,7 @@ const Theme = () => {
                 ❤️
               </div>
 
-              <h3 className="mt-5 text-xl font-bold text-text-primary">
+              <h3 className="mt-5 text-xl font-bold text-vet-text-primary">
                 Trusted Care
               </h3>
 
@@ -278,7 +278,7 @@ const ColorCard = ({ name, color, className }) => {
       />
 
       <div className="mt-3">
-        <p className="font-semibold text-text-primary">
+        <p className="font-semibold text-vet-text-primary">
           {name}
         </p>
 

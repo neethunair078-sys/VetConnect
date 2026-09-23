@@ -39,7 +39,7 @@ const TelehealthReadiness = () => {
 
               text-xs
 
-              text-[#786D67]
+              text-vet-text-secondary
             "
           >
 

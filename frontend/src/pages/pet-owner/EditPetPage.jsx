@@ -574,7 +574,7 @@ if (loadError || !pet) {
     <DashboardLayout>
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-[#302925]">
+          <h2 className="text-xl font-semibold text-vet-text-primary">
             Pet not found
           </h2>
 
@@ -584,14 +584,14 @@ if (loadError || !pet) {
             className="
               mt-4
               rounded-full
-              bg-[#8B572F]
+              bg-vet-primary-dark
               px-5
               py-2.5
               text-sm
               font-medium
               text-white
               cursor-pointer
-              hover:bg-[#744622]
+              hover:bg-vet-primary-dark-hover
               transition
             "
           >
@@ -673,7 +673,7 @@ if (loadError || !pet) {
               text-sm
               sm:text-base
 
-              text-[#786D67]
+              text-vet-text-secondary
             "
           >
             Update your pet's information
@@ -926,7 +926,7 @@ if (loadError || !pet) {
 
                 rounded-full
 
-                bg-[#8B572F]
+                bg-vet-primary-dark
 
                 px-5
                 sm:px-6
@@ -946,7 +946,7 @@ if (loadError || !pet) {
                 transition-all
                 duration-200
 
-                hover:bg-[#744622]
+                hover:bg-vet-primary-dark-hover
 
                 hover:-translate-y-0.5
 
@@ -1026,7 +1026,7 @@ const Step = ({
 
           ${
             active || completed
-              ? "bg-[#8B572F] text-white"
+              ? "bg-vet-primary-dark text-white"
               : "bg-[#E7E2DE] text-[#776B64]"
           }
         `}
@@ -1086,7 +1086,7 @@ const StepLine = ({
 
         ${
           active
-            ? "bg-[#8B572F]"
+            ? "bg-vet-primary-dark"
             : "bg-[#DED8D3]"
         }
       `}

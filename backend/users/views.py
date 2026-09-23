@@ -72,6 +72,9 @@ class LoginView(generics.GenericAPIView):
                 "email": user.email,
                 "phone": user.phone,
                 "role": user.role,
+                "profileImage": request.build_absolute_uri(user.profile_image.url)
+                    if user.profile_image
+                    else None,
             }
 
             # Add doctor information to login response
