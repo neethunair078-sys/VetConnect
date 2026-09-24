@@ -7,8 +7,8 @@ const LandingPage = () => {
         <>
             <Navbar />
 
-            <Container >
-                <section className="min-h-[calc(100vh-70px)] grid grid-cols-1 lg:grid-cols-2 items-center gap-10 py-12 lg:py-16">
+            <Container className="bg-vet-background-soft">
+                <section className="bg-vet-background-soft min-h-[calc(100vh-70px)] grid grid-cols-1 lg:grid-cols-2 items-center gap-10 py-12 lg:py-16">
 
                     {/* LEFT CONTENT */}
                     <div className="max-w-xl">

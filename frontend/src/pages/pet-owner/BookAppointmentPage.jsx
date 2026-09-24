@@ -77,10 +77,11 @@ const BookAppointmentPage = () => {
 
         const data = await getApprovedDoctors();
 
+        console.log(data)
+
         const mappedDoctors = data.map((doctor) => ({
           ...doctor,
 
-          // Temporary UI values
           image: "/images/doctors/default-doctor.jpg",
           rating: 0,
           reviews: 0,

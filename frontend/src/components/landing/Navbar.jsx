@@ -18,7 +18,7 @@ const Navbar = () => {
 
     return (
         <>
-            <Container className='bg-light'>
+            <Container className='bg-vet-light'>
                 <nav className="h-[70px] flex items-center justify-between">
                     {/* Logo Icon */}
                     <img src={LogoIcon} alt="Logo icon" />
