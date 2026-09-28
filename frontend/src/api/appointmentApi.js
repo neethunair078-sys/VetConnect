@@ -10,3 +10,12 @@ export const getAppointments = async () => {
   const response = await api.get("/appointments/");
   return response.data;
 };
+
+export const updateAppointmentStatus = async (appointmentId, action) => {
+  const response = await api.patch(
+    `/appointments/${appointmentId}/status/`,
+    { action }
+  );
+
+  return response.data;
+};

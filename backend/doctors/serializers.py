@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 
 from .models import DoctorProfile
+from pets.models import Pet
 
 
 User = get_user_model()
@@ -298,3 +299,65 @@ class DoctorProfileSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+
+
+
+class DoctorPatientSerializer(serializers.ModelSerializer):
+    owner_name = serializers.CharField(
+        source="owner.get_full_name",
+        read_only=True
+    )
+
+    class Meta:
+        model = Pet
+        fields = [
+            "id",
+            "name",
+            "species",
+            "breed",
+            "age",
+            "weight",
+            "gender",
+            "vaccination_status",
+            "image",
+            "owner_name",
+        ]
+        read_only_fields = fields
+
+
+
+class DoctorPatientDetailSerializer(serializers.ModelSerializer):
+    owner_name = serializers.CharField(
+        source="owner.get_full_name",
+        read_only=True
+    )
+    owner_email = serializers.EmailField(
+        source="owner.email",
+        read_only=True
+    )
+    owner_phone = serializers.CharField(
+        source="owner.phone",
+        read_only=True
+    )
+
+    class Meta:
+        model = Pet
+        fields = [
+            "id",
+            "name",
+            "species",
+            "breed",
+            "age",
+            "weight",
+            "gender",
+            "microchip",
+            "vaccination_status",
+            "medical_notes",
+            "image",
+            "owner_name",
+            "owner_email",
+            "owner_phone",
+            "created_at",
+        ]
+        read_only_fields = fields

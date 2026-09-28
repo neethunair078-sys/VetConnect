@@ -10,7 +10,10 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
-import { getAppointments } from "../../api/appointmentApi";
+import {
+  getAppointments,
+  updateAppointmentStatus,
+} from "../../api/appointmentApi";
 
 const DoctorAppointments = () => {
   const navigate = useNavigate();
@@ -18,6 +21,44 @@ const DoctorAppointments = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("ALL");
+  const [updatingAppointmentId, setUpdatingAppointmentId] = useState(null);
+
+  const handleStatusUpdate = async (appointmentId, action) => {
+    try {
+      setUpdatingAppointmentId(appointmentId);
+
+      const response = await updateAppointmentStatus(appointmentId, action);
+
+      const updatedAppointment = response.appointment;
+
+      setAppointments((currentAppointments) =>
+        currentAppointments.map((appointment) =>
+          appointment.id === updatedAppointment.id
+            ? updatedAppointment
+            : appointment,
+        ),
+      );
+
+      const messages = {
+        confirm: "Appointment confirmed successfully.",
+        reject: "Appointment rejected successfully.",
+        complete: "Appointment marked as completed.",
+      };
+
+      toast.success(messages[action]);
+    } catch (error) {
+      console.error(
+        "Failed to update appointment:",
+        error.response?.data || error.message,
+      );
+
+      toast.error(
+        error.response?.data?.error || "Failed to update appointment.",
+      );
+    } finally {
+      setUpdatingAppointmentId(null);
+    }
+  };
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -464,28 +505,87 @@ const DoctorAppointments = () => {
                     </span>
 
                     {/* Action */}
-                    <button
-                      type="button"
-                      className="
-                        flex
-                        items-center
-                        justify-center
-                        gap-1
-                        rounded-full
-                        border
-                        border-[#E5DDD8]
-                        px-4
-                        py-2.5
-                        text-sm
-                        font-medium
-                        text-[#8B572F]
-                        transition
-                        hover:bg-[#F9F1EA]
-                      "
-                    >
-                      View
-                      <ChevronRight size={16} />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      {appointment.status === "PENDING" && (
+                        <>
+                          <button
+                            type="button"
+                            disabled={updatingAppointmentId === appointment.id}
+                            onClick={() =>
+                              handleStatusUpdate(appointment.id, "confirm")
+                            }
+                            className="
+                              rounded-full
+                              bg-vet-primary
+                              px-4
+                              py-2.5
+                              text-sm
+                              font-medium
+                              text-white
+                              transition
+                              hover:bg-vet-primary-hover
+                              disabled:cursor-not-allowed
+                              disabled:opacity-50
+                            "
+                          >
+                            {updatingAppointmentId === appointment.id
+                              ? "Updating..."
+                              : "Confirm"}
+                          </button>
+
+                          <button
+                            type="button"
+                            disabled={updatingAppointmentId === appointment.id}
+                            onClick={() =>
+                              handleStatusUpdate(appointment.id, "reject")
+                            }
+                            className="
+                              rounded-full
+                              border
+                              border-[#E5DDD8]
+                              px-4
+                              py-2.5
+                              text-sm
+                              font-medium
+                              text-[#A85A5A]
+                              transition
+                              hover:bg-[#FBECEC]
+                              disabled:cursor-not-allowed
+                              disabled:opacity-50
+                            "
+                          >
+                            Reject
+                          </button>
+                        </>
+                      )}
+
+                      {appointment.status === "CONFIRMED" && (
+                        <button
+                          type="button"
+                          disabled={updatingAppointmentId === appointment.id}
+                          onClick={() =>
+                            handleStatusUpdate(appointment.id, "complete")
+                          }
+                          className="
+                            rounded-full
+                            bg-vet-primary-dark
+                            px-4
+                            py-2.5
+                            text-sm
+                            font-medium
+                            text-white
+                            transition
+                            hover:bg-vet-primary-dark-hover
+                            disabled:cursor-not-allowed
+                            disabled:opacity-50
+                          "
+                        >
+                          {updatingAppointmentId === appointment.id
+                            ? "Updating..."
+                            : "Complete"}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}

@@ -20,6 +20,8 @@ import DoctorCompleteProfile from "./pages/doctor/DoctorCompleteProfile";
 import DoctorProfile from "./pages/doctor/DoctorProfile";
 import DoctorProfileRoute from "./components/auth/DoctorProfileRoute";
 import DoctorAvailability from "./pages/doctor/DoctorAvailability";
+import DoctorPatients from "./pages/doctor/DoctorPatients";
+import DoctorPatientProfile from "./pages/doctor/DoctorPatientProfile";
 
 function App() {
   return (
@@ -44,6 +46,7 @@ function App() {
             <Route path="/pet-owner/appointments" element={<AppointmentsPage />} />
             <Route path="/pet-owner/appointments/book" element={<BookAppointmentPage />} />
 
+
             {/* DOCTOR   */}
 
             <Route element={<DoctorProfileRoute />}>
@@ -52,6 +55,8 @@ function App() {
               <Route path="/doctor/appointments" element={<DoctorAppointments />} />
               <Route path="/doctor/profile" element={<DoctorProfile />}/>
               <Route path="/doctor/availability" element={<DoctorAvailability />} />
+              <Route path="/doctor/patients" element={<DoctorPatients />} />
+              <Route path="/doctor/patients/:id" element={<DoctorPatientProfile />}/>
             </Route>
             
             {/* <Route path="/doctor/availability" element={<DoctorAvailabilityPage />} /> */}

@@ -99,3 +99,15 @@ class AppointmentSerializer(serializers.ModelSerializer):
                 )
 
         return attrs
+
+
+
+class AppointmentStatusSerializer(serializers.Serializer):
+    action = serializers.ChoiceField(
+        choices=[
+            "confirm",
+            "reject",
+            "complete",
+        ]
+    )
+    

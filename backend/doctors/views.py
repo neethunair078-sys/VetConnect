@@ -5,7 +5,15 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import PermissionDenied
 
 from .models import DoctorProfile
-from .serializers import (DoctorRegisterSerializer, DoctorApprovalSerializer, ApprovedDoctorSerializer, DoctorProfileSerializer)
+from pets.models import Pet
+from .serializers import (
+    DoctorRegisterSerializer, 
+    DoctorApprovalSerializer, 
+    ApprovedDoctorSerializer, 
+    DoctorProfileSerializer, 
+    DoctorPatientSerializer, 
+    DoctorPatientDetailSerializer
+    )
 from .permissions import IsAdminUser
 
 
@@ -171,3 +179,48 @@ class DoctorProfileView(generics.RetrieveUpdateAPIView):
             )
 
         return DoctorProfile.objects.select_related("user").get(user=user)
+
+
+
+
+class DoctorPatientsView(generics.ListAPIView):
+    serializer_class = DoctorPatientSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.role != "DOCTOR":
+            raise PermissionDenied(
+                "Only doctors can access their patients."
+            )
+
+        return (
+            Pet.objects
+            .filter(appointments__doctor__user=user)
+            .select_related("owner")
+            .distinct()
+            .order_by("name")
+        )
+
+
+
+
+class DoctorPatientDetailView(generics.RetrieveAPIView):
+    serializer_class = DoctorPatientDetailSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.role != "DOCTOR":
+            raise PermissionDenied(
+                "Only doctors can access patient details."
+            )
+
+        return (
+            Pet.objects
+            .filter(appointments__doctor__user=user)
+            .select_related("owner")
+            .distinct()
+        )
