@@ -15,3 +15,13 @@ export const getDoctorPatient = async (patientId) => {
   const response = await api.get(`/doctors/patients/${patientId}/`);
   return response.data;
 };
+
+
+// Get each patient appointment details
+export const getDoctorPatientAppointments = async (patientId) => {
+  const response = await api.get(
+    `/doctors/patients/${patientId}/appointments/`
+  );
+
+  return response.data;
+};

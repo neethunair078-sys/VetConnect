@@ -11,7 +11,7 @@ import {
 import toast from "react-hot-toast";
 
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
-import { getDoctorPatient } from "../../api/doctorApi";
+import { getDoctorPatient, getDoctorPatientAppointments  } from "../../api/doctorApi";
 
 const DoctorPatientProfile = () => {
   const navigate = useNavigate();
@@ -20,14 +20,22 @@ const DoctorPatientProfile = () => {
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [appointments, setAppointments] = useState([]);
+  const [appointmentsLoading, setAppointmentsLoading] = useState(true);
+
   useEffect(() => {
     const fetchPatient = async () => {
       try {
         setLoading(true);
+        setAppointmentsLoading(true);
 
-        const data = await getDoctorPatient(id);
+        const [patientData, appointmentData] = await Promise.all([
+          getDoctorPatient(id),
+          getDoctorPatientAppointments(id),
+        ]);
 
-        setPatient(data);
+        setPatient(patientData);
+        setAppointments(appointmentData);
       } catch (error) {
         console.error(
           "Failed to fetch patient:",
@@ -37,11 +45,12 @@ const DoctorPatientProfile = () => {
         toast.error("Unable to load patient details.");
       } finally {
         setLoading(false);
+        setAppointmentsLoading(false);
       }
-    };
+  };
 
-    fetchPatient();
-  }, [id]);
+  fetchPatient();
+}, [id]);
 
   const getPetImageUrl = (image) => {
     if (!image) {
@@ -300,14 +309,89 @@ const DoctorPatientProfile = () => {
         {/* Future sections */}
         <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
 
-          <ActionCard
-            icon={CalendarDays}
-            title="Appointment History"
-            description="View previous and upcoming appointments for this patient."
-            onClick={() =>
-              toast("Appointment history will be connected next.")
-            }
-          />
+          <section className="rounded-[24px] bg-vet-card p-6 shadow-[0_8px_30px_rgba(70,45,30,0.05)] md:col-span-2">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-vet-icon-soft">
+                <CalendarDays
+                  size={20}
+                  className="text-vet-primary-dark"
+                />
+              </div>
+
+              <div>
+                <h2 className="text-lg font-semibold text-vet-text-primary">
+                  Appointment History
+                </h2>
+
+                <p className="mt-1 text-sm text-vet-text-secondary">
+                  Previous and upcoming appointments for this patient.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              {appointmentsLoading ? (
+                <p className="text-sm text-vet-text-secondary">
+                  Loading appointment history...
+                </p>
+              ) : appointments.length === 0 ? (
+                <div className="rounded-xl bg-vet-background-soft p-5 text-center">
+                  <p className="text-sm text-vet-text-secondary">
+                    No appointments found for this patient.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {appointments.map((appointment) => (
+                    <div
+                      key={appointment.id}
+                      className="rounded-xl border border-vet-border bg-vet-background-soft p-4"
+                    >
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <p className="font-medium text-vet-text-primary">
+                            {appointment.appointment_type === "FOLLOW_UP"
+                              ? "Follow-up"
+                              : "General Consultation"}
+                          </p>
+
+                          <p className="mt-1 text-sm text-vet-text-secondary">
+                            {appointment.appointment_date}{" "}
+                            •{" "}
+                            {appointment.appointment_time}
+                          </p>
+                        </div>
+
+                        <span
+                          className={`inline-flex w-fit rounded-full px-3 py-1.5 text-xs font-medium ${
+                            appointment.status === "COMPLETED"
+                              ? "bg-vet-success-bg text-vet-success-text"
+                              : appointment.status === "CONFIRMED"
+                              ? "bg-vet-warning-bg text-vet-warning-text"
+                              : appointment.status === "CANCELLED" ||
+                                appointment.status === "REJECTED"
+                              ? "bg-vet-error-bg text-vet-error-text"
+                              : "bg-vet-icon-soft text-vet-text-secondary"
+                          }`}
+                        >
+                          {appointment.status}
+                        </span>
+                      </div>
+
+                      {appointment.reason && (
+                        <p className="mt-3 text-sm text-vet-text-secondary">
+                          <span className="font-medium text-vet-text-primary">
+                            Reason:
+                          </span>{" "}
+                          {appointment.reason}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
 
           <ActionCard
             icon={Scale}

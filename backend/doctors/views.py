@@ -6,6 +6,8 @@ from rest_framework.exceptions import PermissionDenied
 
 from .models import DoctorProfile
 from pets.models import Pet
+from appointments.models import Appointment
+
 from .serializers import (
     DoctorRegisterSerializer, 
     DoctorApprovalSerializer, 
@@ -14,6 +16,8 @@ from .serializers import (
     DoctorPatientSerializer, 
     DoctorPatientDetailSerializer
     )
+
+from appointments.serializers import AppointmentSerializer
 from .permissions import IsAdminUser
 
 
@@ -223,4 +227,37 @@ class DoctorPatientDetailView(generics.RetrieveAPIView):
             .filter(appointments__doctor__user=user)
             .select_related("owner")
             .distinct()
+        )
+
+
+
+
+class DoctorPatientAppointmentsView(generics.ListAPIView):
+    serializer_class = AppointmentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        patient_id = self.kwargs["patient_id"]
+
+        if user.role != "DOCTOR":
+            raise PermissionDenied(
+                "Only doctors can access patient appointments."
+            )
+
+        return (
+            Appointment.objects
+            .filter(
+                pet_id=patient_id,
+                doctor__user=user,
+            )
+            .select_related(
+                "pet",
+                "pet__owner",
+                "doctor__user",
+            )
+            .order_by(
+                "-appointment_date",
+                "-appointment_time",
+            )
         )
