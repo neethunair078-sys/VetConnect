@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'pets',
     'appointments',
     'availability',
+    'health_records'
 ]
 
 MIDDLEWARE = [

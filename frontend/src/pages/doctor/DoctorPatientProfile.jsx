@@ -11,7 +11,7 @@ import {
 import toast from "react-hot-toast";
 
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
-import { getDoctorPatient, getDoctorPatientAppointments  } from "../../api/doctorApi";
+import { getDoctorPatient, getDoctorPatientAppointments, getDoctorPatientHealthRecords, createHealthRecord  } from "../../api/doctorApi";
 
 const DoctorPatientProfile = () => {
   const navigate = useNavigate();
@@ -23,19 +23,37 @@ const DoctorPatientProfile = () => {
   const [appointments, setAppointments] = useState([]);
   const [appointmentsLoading, setAppointmentsLoading] = useState(true);
 
+  const [healthRecords, setHealthRecords] = useState([]);
+  const [healthRecordsLoading, setHealthRecordsLoading] = useState(true);
+
+  const [showHealthRecordForm, setShowHealthRecordForm] = useState(false);
+
+  const [healthRecordForm, setHealthRecordForm] = useState({
+    record_type: "",
+    diagnosis: "",
+    treatment: "",
+    prescription: "",
+    notes: "",
+    record_date: new Date().toISOString().split("T")[0],
+  });
+
+  const [savingHealthRecord, setSavingHealthRecord] = useState(false);
+
   useEffect(() => {
     const fetchPatient = async () => {
       try {
         setLoading(true);
         setAppointmentsLoading(true);
 
-        const [patientData, appointmentData] = await Promise.all([
+        const [patientData, appointmentData, healthRecordsData] = await Promise.all([
           getDoctorPatient(id),
           getDoctorPatientAppointments(id),
+          getDoctorPatientHealthRecords(id),
         ]);
 
         setPatient(patientData);
         setAppointments(appointmentData);
+        setHealthRecords(healthRecordsData);
       } catch (error) {
         console.error(
           "Failed to fetch patient:",
@@ -46,11 +64,71 @@ const DoctorPatientProfile = () => {
       } finally {
         setLoading(false);
         setAppointmentsLoading(false);
+        setHealthRecordsLoading(false);
       }
   };
 
   fetchPatient();
 }, [id]);
+
+
+const handleHealthRecordChange = (e) => {
+  const { name, value } = e.target;
+
+  setHealthRecordForm((current) => ({
+    ...current,
+    [name]: value,
+  }));
+};
+
+const handleCreateHealthRecord = async (e) => {
+  e.preventDefault();
+
+  if (!healthRecordForm.record_type.trim()) {
+    toast.error("Please enter a record type.");
+    return;
+  }
+
+  try {
+    setSavingHealthRecord(true);
+
+    const newRecord = await createHealthRecord(
+      id,
+      healthRecordForm
+    );
+
+    setHealthRecords((current) => [
+      newRecord,
+      ...current,
+    ]);
+
+    setHealthRecordForm({
+      record_type: "",
+      diagnosis: "",
+      treatment: "",
+      prescription: "",
+      notes: "",
+      record_date: new Date().toISOString().split("T")[0],
+    });
+
+    setShowHealthRecordForm(false);
+
+    toast.success("Health record added successfully.");
+  } catch (error) {
+    console.error(
+      "Failed to create health record:",
+      error.response?.data || error.message
+    );
+
+    toast.error(
+      error.response?.data?.detail ||
+        "Failed to add health record."
+    );
+  } finally {
+    setSavingHealthRecord(false);
+  }
+};
+
 
   const getPetImageUrl = (image) => {
     if (!image) {
@@ -309,6 +387,8 @@ const DoctorPatientProfile = () => {
         {/* Future sections */}
         <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
 
+          {/* APPOINTMENT HISTORY */}
+
           <section className="rounded-[24px] bg-vet-card p-6 shadow-[0_8px_30px_rgba(70,45,30,0.05)] md:col-span-2">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-vet-icon-soft">
@@ -393,14 +473,242 @@ const DoctorPatientProfile = () => {
             </div>
           </section>
 
-          <ActionCard
-            icon={Scale}
-            title="Health Records"
-            description="View medical records, prescriptions and vaccination history."
-            onClick={() =>
-              toast("Health records will be connected next.")
-            }
-          />
+
+          {/* HEALTH RECORDS */}
+
+          <section className="rounded-[24px] bg-vet-card p-6 shadow-[0_8px_30px_rgba(70,45,30,0.05)]">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-vet-icon-soft">
+                  <Scale
+                    size={20}
+                    className="text-vet-primary-dark"
+                  />
+                </div>
+
+                <div>
+                  <h2 className="text-lg font-semibold text-vet-text-primary">
+                    Health Records
+                  </h2>
+
+                  <p className="mt-1 text-sm text-vet-text-secondary">
+                    Medical history and treatment records.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowHealthRecordForm((current) => !current)
+                }
+                className="rounded-full bg-vet-primary-dark px-4 py-2 text-sm font-medium text-white transition hover:bg-vet-primary-dark-hover"
+              >
+                {showHealthRecordForm
+                  ? "Cancel"
+                  : "Add Health Record"}
+              </button>
+            </div>
+
+            {showHealthRecordForm && (
+              <form
+                onSubmit={handleCreateHealthRecord}
+                className="mt-6 rounded-2xl border border-vet-border bg-vet-background-soft p-5"
+              >
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+
+                  <div>
+                    <label className="text-sm font-medium text-vet-text-primary">
+                      Record Type
+                    </label>
+
+                    <input
+                      type="text"
+                      name="record_type"
+                      value={healthRecordForm.record_type}
+                      onChange={handleHealthRecordChange}
+                      placeholder="e.g. General Consultation"
+                      className="mt-2 w-full rounded-xl border border-vet-border-input bg-vet-input px-4 py-3 text-sm outline-none focus:border-vet-primary-dark"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-vet-text-primary">
+                      Record Date
+                    </label>
+
+                    <input
+                      type="date"
+                      name="record_date"
+                      value={healthRecordForm.record_date}
+                      onChange={handleHealthRecordChange}
+                      className="mt-2 w-full rounded-xl border border-vet-border-input bg-vet-input px-4 py-3 text-sm outline-none focus:border-vet-primary-dark"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-vet-text-primary">
+                      Diagnosis
+                    </label>
+
+                    <textarea
+                      name="diagnosis"
+                      value={healthRecordForm.diagnosis}
+                      onChange={handleHealthRecordChange}
+                      rows={3}
+                      placeholder="Enter diagnosis"
+                      className="mt-2 w-full rounded-xl border border-vet-border-input bg-vet-input px-4 py-3 text-sm outline-none focus:border-vet-primary-dark"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-vet-text-primary">
+                      Treatment
+                    </label>
+
+                    <textarea
+                      name="treatment"
+                      value={healthRecordForm.treatment}
+                      onChange={handleHealthRecordChange}
+                      rows={3}
+                      placeholder="Enter treatment"
+                      className="mt-2 w-full rounded-xl border border-vet-border-input bg-vet-input px-4 py-3 text-sm outline-none focus:border-vet-primary-dark"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-vet-text-primary">
+                      Prescription
+                    </label>
+
+                    <textarea
+                      name="prescription"
+                      value={healthRecordForm.prescription}
+                      onChange={handleHealthRecordChange}
+                      rows={3}
+                      placeholder="Enter prescription"
+                      className="mt-2 w-full rounded-xl border border-vet-border-input bg-vet-input px-4 py-3 text-sm outline-none focus:border-vet-primary-dark"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-vet-text-primary">
+                      Notes
+                    </label>
+
+                    <textarea
+                      name="notes"
+                      value={healthRecordForm.notes}
+                      onChange={handleHealthRecordChange}
+                      rows={3}
+                      placeholder="Additional notes"
+                      className="mt-2 w-full rounded-xl border border-vet-border-input bg-vet-input px-4 py-3 text-sm outline-none focus:border-vet-primary-dark"
+                    />
+                  </div>
+
+                </div>
+
+                <div className="mt-5 flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={savingHealthRecord}
+                    className="rounded-full bg-vet-primary-dark px-5 py-2.5 text-sm font-medium text-white transition hover:bg-vet-primary-dark-hover disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {savingHealthRecord
+                      ? "Saving..."
+                      : "Save Health Record"}
+                  </button>
+                </div>
+              </form>
+            )}
+
+            <div className="mt-6">
+              {healthRecordsLoading ? (
+                <p className="text-sm text-vet-text-secondary">
+                  Loading health records...
+                </p>
+              ) : healthRecords.length === 0 ? (
+                <div className="rounded-xl bg-vet-background-soft p-5 text-center">
+                  <p className="text-sm text-vet-text-secondary">
+                    No health records found for this patient.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {healthRecords.map((record) => (
+                    <div
+                      key={record.id}
+                      className="rounded-xl border border-vet-border bg-vet-background-soft p-4"
+                    >
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <h3 className="font-medium text-vet-text-primary">
+                            {record.record_type}
+                          </h3>
+
+                          <p className="mt-1 text-xs text-vet-text-muted">
+                            {record.record_date}
+                          </p>
+                        </div>
+
+                        <span className="text-xs text-vet-text-secondary">
+                          {record.doctor_name}
+                        </span>
+                      </div>
+
+                      {record.diagnosis && (
+                        <div className="mt-4">
+                          <p className="text-xs font-medium text-vet-text-muted">
+                            Diagnosis
+                          </p>
+
+                          <p className="mt-1 text-sm text-vet-text-secondary">
+                            {record.diagnosis}
+                          </p>
+                        </div>
+                      )}
+
+                      {record.treatment && (
+                        <div className="mt-3">
+                          <p className="text-xs font-medium text-vet-text-muted">
+                            Treatment
+                          </p>
+
+                          <p className="mt-1 text-sm text-vet-text-secondary">
+                            {record.treatment}
+                          </p>
+                        </div>
+                      )}
+
+                      {record.prescription && (
+                        <div className="mt-3">
+                          <p className="text-xs font-medium text-vet-text-muted">
+                            Prescription
+                          </p>
+
+                          <p className="mt-1 text-sm text-vet-text-secondary">
+                            {record.prescription}
+                          </p>
+                        </div>
+                      )}
+
+                      {record.notes && (
+                        <div className="mt-3">
+                          <p className="text-xs font-medium text-vet-text-muted">
+                            Notes
+                          </p>
+
+                          <p className="mt-1 text-sm text-vet-text-secondary">
+                            {record.notes}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
 
         </div>
 
@@ -433,36 +741,6 @@ const InfoItem = ({
         </p>
       </div>
     </div>
-  );
-};
-
-const ActionCard = ({
-  icon: Icon,
-  title,
-  description,
-  onClick,
-}) => {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="rounded-[24px] bg-vet-card p-6 text-left shadow-[0_8px_30px_rgba(70,45,30,0.05)] transition hover:-translate-y-1 hover:shadow-md"
-    >
-      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-vet-icon-soft">
-        <Icon
-          size={21}
-          className="text-vet-primary-dark"
-        />
-      </div>
-
-      <h3 className="mt-4 text-base font-semibold text-vet-text-primary">
-        {title}
-      </h3>
-
-      <p className="mt-2 text-sm leading-6 text-vet-text-secondary">
-        {description}
-      </p>
-    </button>
   );
 };
 
