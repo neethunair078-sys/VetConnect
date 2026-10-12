@@ -22,6 +22,7 @@ import DoctorProfileRoute from "./components/auth/DoctorProfileRoute";
 import DoctorAvailability from "./pages/doctor/DoctorAvailability";
 import DoctorPatients from "./pages/doctor/DoctorPatients";
 import DoctorPatientProfile from "./pages/doctor/DoctorPatientProfile";
+import DoctorHealthRecords from "./pages/doctor/DoctorHealthRecords";
 
 function App() {
   return (
@@ -57,6 +58,7 @@ function App() {
               <Route path="/doctor/availability" element={<DoctorAvailability />} />
               <Route path="/doctor/patients" element={<DoctorPatients />} />
               <Route path="/doctor/patients/:id" element={<DoctorPatientProfile />}/>
+              <Route path="/doctor/health-records" element={<DoctorHealthRecords />}/>
             </Route>
             
             {/* <Route path="/doctor/availability" element={<DoctorAvailabilityPage />} /> */}

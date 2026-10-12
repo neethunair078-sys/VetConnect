@@ -36,3 +36,9 @@ export const createHealthRecord = async (patientId, recordData) => {
 
   return response.data;
 };
+
+
+export const getDoctorHealthRecords = async () => {
+  const response = await api.get("/health-records/");
+  return response.data;
+};

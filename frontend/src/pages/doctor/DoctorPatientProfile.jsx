@@ -94,7 +94,10 @@ const handleCreateHealthRecord = async (e) => {
 
     const newRecord = await createHealthRecord(
       id,
-      healthRecordForm
+      {
+        ...healthRecordForm,
+        pet: Number(id),
+      }
     );
 
     setHealthRecords((current) => [

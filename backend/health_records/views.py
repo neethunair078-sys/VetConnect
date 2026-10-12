@@ -47,3 +47,33 @@ class DoctorPatientHealthRecordsView(generics.ListCreateAPIView):
         serializer.save(
             doctor=user.doctor_profile
         )
+
+
+
+
+class DoctorHealthRecordsView(generics.ListAPIView):
+    serializer_class = HealthRecordSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.role != "DOCTOR":
+            raise PermissionDenied(
+                "Only doctors can access health records."
+            )
+
+        return (
+            HealthRecord.objects
+            .filter(doctor__user=user)
+            .select_related(
+                "pet",
+                "pet__owner",
+                "doctor",
+                "doctor__user",
+            )
+            .order_by(
+                "-record_date",
+                "-created_at",
+            )
+        )

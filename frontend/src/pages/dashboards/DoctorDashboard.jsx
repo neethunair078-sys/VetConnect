@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import {
   CalendarDays,
   Clock3,
@@ -8,85 +10,112 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { getAppointments } from "../../api/appointmentApi";
+
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 
 const DoctorDashboard = () => {
-  // Temporary data
-  // Later these values can come from Django REST APIs.
+
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
+
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        setLoading(true);
+
+        const data = await getAppointments();
+
+        setAppointments(data);
+      } catch (error) {
+        console.error(
+          "Failed to fetch appointments:",
+          error.response?.data || error.message
+        );
+
+        toast.error("Unable to load dashboard appointments.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAppointments();
+  }, []);
+
+
+  const today = new Date().toISOString().split("T")[0];
+
+  const todayAppointments = appointments.filter(
+    (appointment) => appointment.appointment_date === today
+  );
+
+  const upcomingAppointments = appointments
+  .filter(
+    (appointment) =>
+      appointment.status === "PENDING" ||
+      appointment.status === "CONFIRMED"
+  )
+  .sort((a, b) => {
+    const dateA = new Date(
+      `${a.appointment_date}T${a.appointment_time}`
+    );
+    const dateB = new Date(
+      `${b.appointment_date}T${b.appointment_time}`
+    );
+
+    return dateA - dateB;
+  });
+
+  const currentPatient = upcomingAppointments[0];
+
+  const remainingAppointments = todayAppointments.filter(
+    (appointment) =>
+      appointment.status === "PENDING" ||
+      appointment.status === "CONFIRMED"
+  ).length;
+
+
+  const completedToday = todayAppointments.filter(
+    (appointment) => appointment.status === "COMPLETED"
+  ).length;
+
+
   const stats = [
     {
       label: "Today's Appointments",
-      value: "8",
+      value: todayAppointments.length,
       icon: CalendarDays,
-      description: "2 remaining",
+      description: `${remainingAppointments} remaining`,
     },
     {
       label: "Total Patients",
-      value: "124",
+      value: new Set(
+        appointments.map((appointment) => appointment.pet)
+      ).size,
       icon: Users,
-      description: "12 new this month",
+      description: "Based on your appointments",
     },
     {
       label: "Consultations",
-      value: "6",
+      value: completedToday,
       icon: Video,
       description: "Completed today",
     },
     {
       label: "Pending Tasks",
-      value: "4",
+      value: appointments.filter(
+        (appointment) => appointment.status === "PENDING"
+      ).length,
       icon: ClipboardList,
-      description: "Needs attention",
+      description: "Appointments needing attention",
     },
   ];
 
-  const appointments = [
-    {
-      id: 1,
-      patient: "Bruno",
-      owner: "Anu Thomas",
-      time: "10:00 AM",
-      type: "Video Consultation",
-      status: "Upcoming",
-    },
-    {
-      id: 2,
-      patient: "Luna",
-      owner: "Rahul Menon",
-      time: "11:30 AM",
-      type: "Follow-up",
-      status: "Upcoming",
-    },
-    {
-      id: 3,
-      patient: "Max",
-      owner: "Meera Nair",
-      time: "2:00 PM",
-      type: "General Consultation",
-      status: "Upcoming",
-    },
-  ];
-
-  const tasks = [
-    {
-      id: 1,
-      title: "Review medical record",
-      patient: "Bruno",
-      completed: false,
-    },
-    {
-      id: 2,
-      title: "Update vaccination record",
-      patient: "Luna",
-      completed: false,
-    },
-    {
-      id: 3,
-      title: "Complete consultation notes",
-      patient: "Max",
-      completed: true,
-    },
-  ];
 
   return (
     <DashboardLayout role="DOCTOR">
@@ -205,6 +234,7 @@ const DoctorDashboard = () => {
 
               <button
                 type="button"
+                onClick={() => navigate("/doctor/appointments")}
                 className="
                   hidden
                   sm:flex
@@ -225,7 +255,7 @@ const DoctorDashboard = () => {
 
             <div className="space-y-3">
 
-              {appointments.map((appointment) => (
+              {todayAppointments.map((appointment) => (
 
                 <div
                   key={appointment.id}
@@ -267,11 +297,11 @@ const DoctorDashboard = () => {
                     <div>
 
                       <p className="text-sm font-semibold text-vet-text-primary">
-                        {appointment.patient}
+                        {appointment.pet_name}
                       </p>
 
                       <p className="text-xs text-vet-text-secondary">
-                        Owner: {appointment.owner}
+                        Owner: {appointment.owner_name}
                       </p>
 
                     </div>
@@ -291,7 +321,7 @@ const DoctorDashboard = () => {
                       />
 
                       <span className="text-sm text-[#665D57]">
-                        {appointment.time}
+                        {appointment.appointment_time}
                       </span>
 
                     </div>
@@ -299,7 +329,7 @@ const DoctorDashboard = () => {
                     <div className="hidden md:block">
 
                       <p className="text-xs text-vet-text-secondary">
-                        {appointment.type}
+                        {appointment.appointment_type === "FOLLOW_UP" ? "Follow-up" : "General Consultation"}
                       </p>
 
                     </div>
@@ -335,6 +365,7 @@ const DoctorDashboard = () => {
 
             <button
               type="button"
+              onClick={() => navigate("/doctor/appointments")}
               className="
                 sm:hidden
                 mt-4
@@ -381,63 +412,48 @@ const DoctorDashboard = () => {
 
             <div className="space-y-4">
 
-              {tasks.map((task) => (
+              {appointments.filter(
+                (appointment) => appointment.status === "PENDING"
+              ).length === 0 ? (
+                <div className="rounded-xl bg-[#FAF7F4] p-4 text-center">
+                  <CheckCircle2
+                    size={22}
+                    className="mx-auto text-[#8B572F]"
+                  />
 
-                <div
-                  key={task.id}
-                  className="
-                    flex
-                    items-start
-                    gap-3
-                  "
-                >
+                  <p className="mt-2 text-sm font-medium text-vet-text-primary">
+                    No pending tasks
+                  </p>
 
-                  <div className="pt-0.5">
-
-                    {task.completed ? (
-                      <CheckCircle2
-                        size={20}
-                        className="text-[#8B572F]"
-                      />
-                    ) : (
-                      <div
-                        className="
-                          w-5
-                          h-5
-                          rounded-full
-                          border-2
-                          border-[#D8CEC7]
-                        "
-                      />
-                    )}
-
-                  </div>
-
-                  <div className="min-w-0">
-
-                    <p
-                      className={`
-                        text-sm
-                        font-medium
-                        ${
-                          task.completed
-                            ? "text-[#A49A94] line-through"
-                            : "text-vet-text-primary"
-                        }
-                      `}
-                    >
-                      {task.title}
-                    </p>
-
-                    <p className="mt-1 text-xs text-vet-text-secondary">
-                      Patient: {task.patient}
-                    </p>
-
-                  </div>
-
+                  <p className="mt-1 text-xs text-vet-text-secondary">
+                    You're all caught up.
+                  </p>
                 </div>
+              ) : (
+                appointments
+                  .filter((appointment) => appointment.status === "PENDING")
+                  .slice(0, 3)
+                  .map((appointment) => (
+                    <div
+                      key={appointment.id}
+                      className="flex items-start gap-3"
+                    >
+                      <div className="pt-0.5">
+                        <div className="h-5 w-5 rounded-full border-2 border-[#D8CEC7]" />
+                      </div>
 
-              ))}
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-vet-text-primary">
+                          Review appointment request
+                        </p>
+
+                        <p className="mt-1 text-xs text-vet-text-secondary">
+                          Patient: {appointment.pet_name}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+              )}
 
             </div>
 
@@ -518,34 +534,50 @@ const DoctorDashboard = () => {
 
               <div className="flex items-center gap-4">
 
-                <div
-                  className="
-                    w-14
-                    h-14
-                    rounded-full
-                    bg-[#EBB183]
-                    flex
-                    items-center
-                    justify-center
-                    text-2xl
-                  "
-                >
-                  🐶
-                </div>
+                {currentPatient ? (
+                  <div
+                    className="
+                      w-14
+                      h-14
+                      rounded-full
+                      bg-[#EBB183]
+                      flex
+                      items-center
+                      justify-center
+                      text-2xl
+                    "
+                  >
+                    🐶
+                  </div>
+                ) : null}
 
                 <div>
 
-                  <h3 className="text-base font-semibold text-vet-text-primary">
-                    Bruno
-                  </h3>
+                  {currentPatient ? (
+                    <>
+                      <h3>{currentPatient.pet_name}</h3>
 
-                  <p className="text-sm text-vet-text-secondary">
-                    Golden Retriever
-                  </p>
+                      <p>
+                        {currentPatient.appointment_type === "FOLLOW_UP"
+                          ? "Follow-up"
+                          : "General Consultation"}
+                      </p>
 
-                  <p className="mt-1 text-xs text-vet-text-secondary">
-                    4 years · Male · 28 kg
-                  </p>
+                      <p>
+                        Owner: {currentPatient.owner_name}
+                      </p>
+
+                      <p>
+                        Appointment: {currentPatient.appointment_date}
+                      </p>
+
+                      <p>
+                        Time: {currentPatient.appointment_time}
+                      </p>
+                    </>
+                  ) : (
+                    <p>No upcoming patients.</p>
+                  )}
 
                 </div>
 
