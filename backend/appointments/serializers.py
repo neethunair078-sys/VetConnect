@@ -1,9 +1,9 @@
+from django.db.models import Q
 from rest_framework import serializers
 from datetime import datetime
 from django.utils import timezone
 
 from .models import Appointment
-from pets.models import Pet
 from doctors.models import DoctorProfile
 
 
@@ -75,22 +75,30 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
         return doctor
 
+    
     def validate(self, attrs):
-   
-        # Prevent booking an appointment in the past.
-  
-
-        from django.utils import timezone
-
-        appointment_date = attrs.get("appointment_date")
-        appointment_time = attrs.get("appointment_time")
+        # Use submitted values, falling back to existing values
+        # when updating an appointment.
+        appointment_date = attrs.get(
+            "appointment_date",
+            getattr(self.instance, "appointment_date", None),
+        )
+        appointment_time = attrs.get(
+            "appointment_time",
+            getattr(self.instance, "appointment_time", None),
+        )
+        doctor = attrs.get(
+            "doctor",
+            getattr(self.instance, "doctor", None),
+        )
 
         if appointment_date and appointment_time:
             appointment_datetime = timezone.make_aware(
                 datetime.combine(
                     appointment_date,
                     appointment_time,
-                )
+                ),
+                timezone.get_current_timezone(),
             )
 
             if appointment_datetime < timezone.now():
@@ -98,7 +106,37 @@ class AppointmentSerializer(serializers.ModelSerializer):
                     "You cannot book an appointment in the past."
                 )
 
+        # Prevent duplicate bookings with the same doctor,
+        # date and start time.
+        if appointment_date and appointment_time and doctor:
+            conflicting_appointments = Appointment.objects.filter(
+                doctor=doctor,
+                appointment_date=appointment_date,
+                appointment_time=appointment_time,
+                status__in=[
+                    Appointment.Status.PENDING,
+                    Appointment.Status.CONFIRMED,
+                ],
+            )
+
+            # Exclude the current appointment when updating it.
+            if self.instance:
+                conflicting_appointments = (
+                    conflicting_appointments.exclude(
+                        pk=self.instance.pk
+                    )
+                )
+
+            if conflicting_appointments.exists():
+                raise serializers.ValidationError({
+                    "appointment_time": [
+                        "This time slot is already booked. "
+                        "Please select another time."
+                    ]
+                })
+
         return attrs
+
 
 
 

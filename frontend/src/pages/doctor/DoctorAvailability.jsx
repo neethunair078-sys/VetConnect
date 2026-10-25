@@ -293,7 +293,28 @@ const DoctorAvailability = () => {
 // AVAILABILITY CARD
 // ==========================================
 
+
 const AvailabilityCard = ({ availability }) => {
+  const now = new Date();
+
+  const slotEnd = new Date(
+    `${availability.date}T${availability.end_time}`
+  );
+
+  const isExpired = slotEnd < now;
+
+  const status = isExpired
+    ? "Expired"
+    : availability.is_available
+    ? "Available"
+    : "Unavailable";
+
+  const statusClass = isExpired
+    ? "bg-gray-100 text-gray-600"
+    : availability.is_available
+    ? "bg-vet-success-bg text-vet-success-text"
+    : "bg-[#FBEAEA] text-[#A15A5A]";
+
   return (
     <div className="flex flex-col gap-4 rounded-[22px] border border-vet-border bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-4">
@@ -314,17 +335,14 @@ const AvailabilityCard = ({ availability }) => {
       </div>
 
       <span
-        className={`inline-flex w-fit rounded-full px-3 py-1 text-xs font-medium ${
-          availability.is_available
-            ? "bg-vet-success-bg text-vet-success-text"
-            : "bg-[#FBEAEA] text-[#A15A5A]"
-        }`}
+        className={`inline-flex w-fit rounded-full px-3 py-1 text-xs font-medium ${statusClass}`}
       >
-        {availability.is_available ? "Available" : "Unavailable"}
+        {status}
       </span>
     </div>
   );
 };
+
 
 // ==========================================
 // HELPERS

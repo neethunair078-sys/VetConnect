@@ -25,7 +25,7 @@ import BookingSummary from "../../components/appointments/BookingSummary";
 import TelehealthReadiness from "../../components/appointments/TelehealthReadiness";
 
 
-import { createAppointment } from "../../api/appointmentApi";
+import { createAppointment, getAppointments } from "../../api/appointmentApi";
 
 import { getApprovedDoctors } from "../../api/doctorApi";
 
@@ -51,6 +51,8 @@ const BookAppointmentPage = () => {
   const [selectedDate, setSelectedDate] = useState(null);
 
   const [selectedTime, setSelectedTime] = useState(null);
+
+  const [appointments, setAppointments] = useState([]);
 
   const [notes, setNotes] = useState("");
 
@@ -137,6 +139,49 @@ const BookAppointmentPage = () => {
 
     fetchAvailability();
   }, [selectedDoctor]);
+
+
+
+  useEffect(() => {
+    if (!selectedDoctor || !selectedDate) {
+      setAppointments([]);
+      return;
+    }
+
+    const fetchAppointments = async () => {
+      try {
+        const data = await getAppointments();
+
+        const appointmentList = Array.isArray(data)
+          ? data
+          : data.results || [];
+
+        setAppointments(appointmentList);
+      } catch (error) {
+        console.error(
+          "Failed to fetch appointments:",
+          error.response?.data || error.message
+        );
+
+        setAppointments([]);
+        toast.error("Unable to check booked time slots.");
+      }
+    };
+
+    fetchAppointments();
+  }, [selectedDoctor, selectedDate]);
+
+
+  const bookedTimes = appointments
+    .filter(
+      (appointment) =>
+        Number(appointment.doctor) === Number(selectedDoctor?.id) &&
+        appointment.appointment_date === selectedDate &&
+        ["PENDING", "CONFIRMED"].includes(appointment.status)
+    )
+    .map((appointment) =>
+      appointment.appointment_time.slice(0, 5)
+    );
 
 
 
@@ -721,6 +766,7 @@ const availableTimes = useMemo(() => {
                       slots={availableTimes}
                       selectedTime={selectedTime}
                       onSelectTime={setSelectedTime}
+                      bookedTimes={bookedTimes}
                     />
 
                   </div>
